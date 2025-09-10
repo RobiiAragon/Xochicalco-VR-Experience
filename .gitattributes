@@ -1,10 +1,10 @@
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/ArtifactDB filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/burst-llvm-19-arm64.dll filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/burst-llvm-19.dll filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-10.dylib filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-19.dylib filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-19.so filter=lfs diff=lfs merge=lfs -text
-C:/Users/ARAGON/Desktop/Xochicalco/Xochicalco-VR-Experience/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/hostmac/dsymutil filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/ArtifactDB filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/burst-llvm-19-arm64.dll filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/burst-llvm-19.dll filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-10.dylib filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-19.dylib filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/libburst-llvm-19.so filter=lfs diff=lfs merge=lfs -text
+D:/Unity Projects/Xochicalco/Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/hostmac/dsymutil filter=lfs diff=lfs merge=lfs -text
 Library/ArtifactDB filter=lfs diff=lfs merge=lfs -text
 Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/* filter=lfs diff=lfs merge=lfs -text
 /Library/PackageCache/com.unity.burst@6aff1dd08a0c/.Runtime/hostmac/dsymutil filter=lfs diff=lfs merge=lfs -text
