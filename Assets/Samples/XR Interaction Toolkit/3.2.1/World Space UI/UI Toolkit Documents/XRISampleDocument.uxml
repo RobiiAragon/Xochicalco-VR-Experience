@@ -1,0 +1,35 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Samples/XR%20Interaction%20Toolkit/3.2.1/World%20Space%20UI/Styles/XRIStyleSheet.uss?fileID=7433441132597879392&amp;guid=3245a7d03283da54db4385c49204e816&amp;type=3#XRIStyleSheet" />
+    <engine:VisualElement picking-mode="Ignore" style="flex-grow: 1; color: rgb(255, 255, 255); padding-left: 15px; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; background-color: rgba(35, 45, 55, 0.95); border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+        <engine:Label text="Spatial Panel" style="-unity-text-align: upper-center; font-size: 18px; margin-bottom: 15px; color: rgb(220, 220, 220); border-bottom-width: 1px; border-bottom-color: rgb(80, 90, 100); padding-bottom: 8px;" />
+        
+        <!-- Slider Row -->
+        <engine:VisualElement style="flex-direction: row; margin-bottom: 12px; align-items: center;">
+            <engine:Label text="Slider" style="min-width: 70px; color: rgb(180, 180, 180); font-size: 12px;" />
+            <engine:VisualElement style="flex-direction: row; flex-grow: 1; align-items: center;">
+                <engine:VisualElement name="ValueContainer" style="background-color: rgb(60, 70, 80); min-width: 70px; min-height: 28px; margin-left: 10px; margin-right: 8px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(80, 90, 100); border-right-color: rgb(80, 90, 100); border-top-color: rgb(80, 90, 100); border-bottom-color: rgb(80, 90, 100); border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px;">
+                    <engine:Label text="Value" style="color: rgb(200, 200, 200); -unity-text-align: middle-center; font-size: 11px;" />
+                </engine:VisualElement>
+                <engine:Label text="TYPE" style="color: rgb(140, 140, 140); font-size: 10px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        
+        <!-- Button Row -->
+        <engine:VisualElement style="flex-direction: row; margin-bottom: 12px; align-items: center;">
+            <engine:Label text="Button" style="min-width: 70px; color: rgb(180, 180, 180); font-size: 12px;" />
+            <engine:Button text="Text Button" class="modern-button" />
+        </engine:VisualElement>
+        
+        <!-- Dropdown Row -->
+        <engine:VisualElement style="flex-direction: row; margin-bottom: 12px; align-items: center;">
+            <engine:Label text="Dropdown" style="min-width: 70px; color: rgb(180, 180, 180); font-size: 12px;" />
+            <engine:DropdownField choices="Option A,Option B,Option C" index="0" class="modern-dropdown" />
+        </engine:VisualElement>
+        
+        <!-- Toggle Row -->
+        <engine:VisualElement style="flex-direction: row; margin-bottom: 12px; align-items: center;">
+            <engine:Label text="Toggle" style="min-width: 70px; color: rgb(180, 180, 180); font-size: 12px;" />
+            <engine:Toggle value="true" class="modern-toggle" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
