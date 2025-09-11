@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Anchor
+  - Portal
+  - LeftHand
+  - RightHand
+  - PortalableObject
   layers:
   - Default
   - TransparentFX
@@ -14,9 +18,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - VRHands
+  - PortalableObjects
+  - PortalClipping
   - 
   - 
   - 
