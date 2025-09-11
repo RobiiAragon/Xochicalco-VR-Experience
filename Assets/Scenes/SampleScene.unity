@@ -1806,7 +1806,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6758849327301269162, guid: c6b4b184963f45b4f82ef507fe7e2e5c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.345
+      value: -2.746
       objectReference: {fileID: 0}
     - target: {fileID: 6758849327301269162, guid: c6b4b184963f45b4f82ef507fe7e2e5c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -13540,6 +13540,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: dc2eaf4ac59563e44a5a9161873c9342, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: be1e10ce8a6f8cc4fb08d11c7f722469, type: 2}
     - target: {fileID: 919132149155446097, guid: dc2eaf4ac59563e44a5a9161873c9342, type: 3}
       propertyPath: m_Name
       value: LOGO
