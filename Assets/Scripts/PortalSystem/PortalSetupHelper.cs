@@ -122,7 +122,7 @@ namespace Xochicalco.PortalSystem
             portal.transform.position = position;
 
             // Agregar PortalController
-            PortalController controller = portal.AddComponent<PortalController>();
+            PortalControllerURP controller = portal.AddComponent<PortalControllerURP>();
 
             // Crear el frame del portal (geometría)
             GameObject frame = CreatePortalFrame(name + "_Frame");
@@ -279,12 +279,12 @@ namespace Xochicalco.PortalSystem
             textObj.transform.localScale = Vector3.one * 0.1f;
         }
 
-        private void SetPortalControllerReferences(PortalController controller, Transform portalCamera, Transform destinationPoint, BoxCollider portalCollider)
+        private void SetPortalControllerReferences(PortalControllerURP controller, Transform portalCamera, Transform destinationPoint, BoxCollider portalCollider)
         {
             // Usar reflexión para asignar campos privados
-            var portalCameraField = typeof(PortalController).GetField("portalCamera", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var destinationPointField = typeof(PortalController).GetField("destinationPoint", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var portalColliderField = typeof(PortalController).GetField("portalCollider", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var portalCameraField = typeof(PortalControllerURP).GetField("portalCamera", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var destinationPointField = typeof(PortalControllerURP).GetField("destinationPoint", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var portalColliderField = typeof(PortalControllerURP).GetField("portalCollider", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             portalCameraField?.SetValue(controller, portalCamera);
             destinationPointField?.SetValue(controller, destinationPoint);
@@ -302,8 +302,8 @@ namespace Xochicalco.PortalSystem
             }
 
             // Buscar los portales creados
-            PortalController portalA = GameObject.Find("PortalA")?.GetComponent<PortalController>();
-            PortalController portalB = GameObject.Find("PortalB")?.GetComponent<PortalController>();
+            PortalControllerURP portalA = GameObject.Find("PortalA")?.GetComponent<PortalControllerURP>();
+            PortalControllerURP portalB = GameObject.Find("PortalB")?.GetComponent<PortalControllerURP>();
 
             if (portalA != null && portalB != null)
             {

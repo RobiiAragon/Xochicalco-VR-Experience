@@ -22,8 +22,8 @@ namespace Xochicalco.PortalSystem
         public class PortalPair
         {
             [Header("Portal Connection")]
-            public PortalController portalA;
-            public PortalController portalB;
+            public PortalControllerURP portalA;
+            public PortalControllerURP portalB;
             public string connectionName;
             
             [Header("Environment Info")]
@@ -150,7 +150,7 @@ namespace Xochicalco.PortalSystem
             return 3; // LOD 3 - Mínima calidad
         }
 
-        public void AddPortalPair(PortalController portalA, PortalController portalB, string connectionName = "")
+        public void AddPortalPair(PortalControllerURP portalA, PortalControllerURP portalB, string connectionName = "")
         {
             PortalPair newPair = new PortalPair
             {
@@ -169,7 +169,7 @@ namespace Xochicalco.PortalSystem
             }
         }
 
-        public void RemovePortalPair(PortalController portal)
+        public void RemovePortalPair(PortalControllerURP portal)
         {
             for (int i = portalPairs.Count - 1; i >= 0; i--)
             {

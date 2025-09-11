@@ -30,6 +30,49 @@ namespace Xochicalco.PortalSystem
             SetupPortalCamera();
             SetupPortalMaterial();
             CreateRenderTexture();
+            FindPlayerCameraAutomatically();
+        }
+
+        private void FindPlayerCameraAutomatically()
+        {
+            if (playerCamera == null)
+            {
+                // Buscar cámara principal
+                Camera mainCam = Camera.main;
+                if (mainCam != null)
+                {
+                    playerCamera = mainCam.transform;
+                    Debug.Log($"Portal {gameObject.name}: Found main camera - {mainCam.name}");
+                    return;
+                }
+
+                // Buscar cámara en XR Origin por nombre
+                GameObject xrOriginObj = GameObject.Find("XR Origin");
+                if (xrOriginObj != null)
+                {
+                    Camera xrCamera = xrOriginObj.GetComponentInChildren<Camera>();
+                    if (xrCamera != null)
+                    {
+                        playerCamera = xrCamera.transform;
+                        Debug.Log($"Portal {gameObject.name}: Found XR Origin camera - {xrCamera.name}");
+                        return;
+                    }
+                }
+
+                // Buscar cualquier cámara activa
+                Camera[] cameras = FindObjectsByType<Camera>(FindObjectsSortMode.None);
+                foreach (Camera cam in cameras)
+                {
+                    if (cam.enabled && cam.gameObject.activeInHierarchy && !cam.name.Contains("Portal"))
+                    {
+                        playerCamera = cam.transform;
+                        Debug.Log($"Portal {gameObject.name}: Found active camera - {cam.name}");
+                        return;
+                    }
+                }
+
+                Debug.LogWarning($"Portal {gameObject.name}: No suitable player camera found!");
+            }
         }
 
         private void SetupPortalCamera()
@@ -145,31 +188,34 @@ namespace Xochicalco.PortalSystem
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
+            // Detectar tanto Player como XR Origin
+            if (other.CompareTag("Player") || other.name.Contains("XR Origin") || other.GetComponent<CharacterController>() != null)
             {
-                // El jugador ha entrado en el área del portal
-                Debug.Log($"Player entered portal: {gameObject.name}");
+                Debug.Log($"Player/XR Origin entered portal: {gameObject.name} - Object: {other.name}");
             }
         }
 
         private void OnTriggerStay(Collider other)
         {
-            if (other.CompareTag("Player") && linkedPortal != null)
+            // Detectar tanto Player como XR Origin
+            if ((other.CompareTag("Player") || other.name.Contains("XR Origin") || other.GetComponent<CharacterController>() != null) && linkedPortal != null)
             {
                 // Verificar si el jugador ha cruzado completamente el portal
                 Vector3 portalToPlayer = other.transform.position - transform.position;
                 if (Vector3.Dot(portalToPlayer, transform.forward) > 0.0f)
                 {
-                    TeleportPlayer(other.transform);
+                    // Para XR Origin, necesitamos mover el objeto padre correcto
+                    Transform targetTransform = GetXROriginTransform(other);
+                    TeleportPlayer(targetTransform);
                 }
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player"))
+            if (other.CompareTag("Player") || other.name.Contains("XR Origin") || other.GetComponent<CharacterController>() != null)
             {
-                Debug.Log($"Player exited portal: {gameObject.name}");
+                Debug.Log($"Player/XR Origin exited portal: {gameObject.name} - Object: {other.name}");
             }
         }
 
@@ -194,6 +240,25 @@ namespace Xochicalco.PortalSystem
 
             // Reactivar el collider después de un frame
             StartCoroutine(ReenablePortalCollider());
+        }
+
+        private Transform GetXROriginTransform(Collider other)
+        {
+            // Buscar el XR Origin en la jerarquía
+            Transform current = other.transform;
+            
+            // Subir por la jerarquía hasta encontrar XR Origin
+            while (current != null)
+            {
+                if (current.name.Contains("XR Origin"))
+                {
+                    return current;
+                }
+                current = current.parent;
+            }
+            
+            // Si no se encuentra XR Origin, usar el transform actual
+            return other.transform;
         }
 
         private System.Collections.IEnumerator ReenablePortalCollider()

@@ -105,7 +105,7 @@ namespace Xochicalco.PortalSystem
 
         private void AssignCameraToPortals()
         {
-            PortalController[] portals = FindObjectsByType<PortalController>(FindObjectsSortMode.None);
+            PortalControllerURP[] portals = FindObjectsByType<PortalControllerURP>(FindObjectsSortMode.None);
             foreach (var portal in portals)
             {
                 portal.SetPlayerCamera(playerCamera.transform);
@@ -145,7 +145,7 @@ namespace Xochicalco.PortalSystem
         [ContextMenu("Find All Portals")]
         public void FindAllPortals()
         {
-            PortalController[] portals = FindObjectsByType<PortalController>(FindObjectsSortMode.None);
+            PortalControllerURP[] portals = FindObjectsByType<PortalControllerURP>(FindObjectsSortMode.None);
             Debug.Log($"🔍 Encontrados {portals.Length} portales:");
             foreach (var portal in portals)
             {
@@ -156,7 +156,7 @@ namespace Xochicalco.PortalSystem
         [ContextMenu("Test Teleport")]
         public void TestTeleport()
         {
-            PortalController[] portals = FindObjectsByType<PortalController>(FindObjectsSortMode.None);
+            PortalControllerURP[] portals = FindObjectsByType<PortalControllerURP>(FindObjectsSortMode.None);
             if (portals.Length >= 2)
             {
                 transform.position = portals[0].transform.position + Vector3.forward * 2;

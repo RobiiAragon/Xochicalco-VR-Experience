@@ -12,7 +12,6 @@ namespace Xochicalco.PortalSystem
         [SerializeField] private Vector3 portalAPosition = new Vector3(0, 1, 0);
         [SerializeField] private Vector3 portalBPosition = new Vector3(10, 1, 0);
         [SerializeField] private Vector3 portalSize = new Vector3(2, 3, 0.1f);
-        [SerializeField] private int renderTextureSize = 512;
         
         [Header("Test Environment")]
         [SerializeField] private bool createTestEnvironments = true;
@@ -33,11 +32,13 @@ namespace Xochicalco.PortalSystem
             }
             
             SetupPortalManager();
+            SetupXROrigin(); // Nuevo: configurar XR Origin automáticamente
             
             Debug.Log("✅ URP Portal System created successfully!");
             Debug.Log("📍 Portal A at: " + portalAPosition);
             Debug.Log("📍 Portal B at: " + portalBPosition);
-            Debug.Log("🎮 Test with the Player in VR or use WASD + Mouse in Scene view");
+            Debug.Log("🎮 Test with VR headset or use Scene view");
+            Debug.Log("🚶‍♂️ Walk through portals to teleport!");
         }
 
         private void CreatePortalMaterials()
@@ -311,6 +312,102 @@ namespace Xochicalco.PortalSystem
             Debug.Log("✅ URP PortalManager configured");
         }
 
+        private void SetupXROrigin()
+        {
+            // Buscar XR Origin por nombre (más compatible)
+            GameObject xrOriginObj = GameObject.Find("XR Origin");
+            if (xrOriginObj == null)
+            {
+                // Buscar objetos que contengan "XR Origin" en el nombre
+                GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+                foreach (GameObject obj in allObjects)
+                {
+                    if (obj.name.Contains("XR Origin") || obj.name.Contains("XROrigin"))
+                    {
+                        xrOriginObj = obj;
+                        break;
+                    }
+                }
+            }
+
+            if (xrOriginObj == null)
+            {
+                Debug.LogWarning("⚠️ No XR Origin found. Portal system will work but may need manual camera setup.");
+                return;
+            }
+
+            // Configurar XR Origin para portales usando método genérico
+            ConfigureXROriginForPortals(xrOriginObj);
+
+            Debug.Log("✅ XR Origin configured for portals");
+        }
+
+        public void ConfigureXROriginForPortals(GameObject xrOrigin)
+        {
+            Debug.Log("🔍 Setting up XR Origin for Portal System...");
+
+            // 1. Configurar tag del XR Origin
+            if (!xrOrigin.CompareTag("Player"))
+            {
+                xrOrigin.tag = "Player";
+                Debug.Log($"✅ XR Origin tagged as 'Player'");
+            }
+
+            // 2. Asegurar que tiene Rigidbody para detectar colliders
+            Rigidbody rb = xrOrigin.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = xrOrigin.AddComponent<Rigidbody>();
+                rb.isKinematic = true; // Kinematic para que no interfiera con XR tracking
+                Debug.Log("✅ Added kinematic Rigidbody to XR Origin");
+            }
+
+            // 3. Agregar collider si no tiene
+            Collider col = xrOrigin.GetComponent<Collider>();
+            if (col == null)
+            {
+                CapsuleCollider capsule = xrOrigin.AddComponent<CapsuleCollider>();
+                capsule.isTrigger = true; // Trigger para no bloquear movimiento
+                capsule.height = 1.8f;
+                capsule.radius = 0.3f;
+                capsule.center = new Vector3(0, 0.9f, 0);
+                Debug.Log("✅ Added trigger CapsuleCollider to XR Origin");
+            }
+
+            // 4. Buscar cámara en XR Origin
+            Camera xrCamera = xrOrigin.GetComponentInChildren<Camera>();
+            if (xrCamera != null)
+            {
+                ConfigurePortalCamerasGeneric(xrCamera);
+                Debug.Log($"✅ Found and configured XR camera: {xrCamera.name}");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No camera found in XR Origin children");
+            }
+
+            Debug.Log("🎯 XR Origin Portal Setup Complete!");
+        }
+
+        private void ConfigurePortalCamerasGeneric(Camera xrCamera)
+        {
+            // Configurar portales URP
+            PortalControllerURP[] urpPortals = FindObjectsByType<PortalControllerURP>(FindObjectsSortMode.None);
+            foreach (var portal in urpPortals)
+            {
+                portal.SetPlayerCamera(xrCamera.transform);
+            }
+
+            // Configurar portales clásicos si existen (para compatibilidad)
+            PortalControllerURP[] classicPortals = FindObjectsByType<PortalControllerURP>(FindObjectsSortMode.None);
+            foreach (var portal in classicPortals)
+            {
+                portal.SetPlayerCamera(xrCamera.transform);
+            }
+
+            Debug.Log($"✅ Configured {urpPortals.Length + classicPortals.Length} portals with XR camera");
+        }
+
 #if UNITY_EDITOR
         [MenuItem("Xochicalco/Setup URP Portal System")]
         static void SetupPortalSystemMenuItem()
@@ -318,6 +415,38 @@ namespace Xochicalco.PortalSystem
             GameObject helper = new GameObject("PortalSetupHelperURP");
             PortalSetupHelperURP setup = helper.AddComponent<PortalSetupHelperURP>();
             setup.CreatePortalSystem();
+            DestroyImmediate(helper);
+        }
+
+        [MenuItem("Xochicalco/Fix XR Origin for Portals")]
+        static void FixXROriginMenuItem()
+        {
+            // Buscar XR Origin por nombre
+            GameObject xrOriginObj = GameObject.Find("XR Origin");
+            if (xrOriginObj == null)
+            {
+                // Buscar objetos que contengan "XR Origin" en el nombre
+                GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+                foreach (GameObject obj in allObjects)
+                {
+                    if (obj.name.Contains("XR Origin") || obj.name.Contains("XROrigin"))
+                    {
+                        xrOriginObj = obj;
+                        break;
+                    }
+                }
+            }
+
+            if (xrOriginObj == null)
+            {
+                Debug.LogError("❌ No XR Origin found in scene!");
+                return;
+            }
+
+            // Crear helper temporal para usar su método
+            GameObject helper = new GameObject("TempHelper");
+            PortalSetupHelperURP setup = helper.AddComponent<PortalSetupHelperURP>();
+            setup.ConfigureXROriginForPortals(xrOriginObj);
             DestroyImmediate(helper);
         }
 #endif
