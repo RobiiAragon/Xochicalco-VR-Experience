@@ -2,7 +2,9 @@
 {
     Properties
     {
+        _MainTex ("Texture", 2D) = "white" {}
         _InactiveColour ("Inactive Colour", Color) = (1, 1, 1, 1)
+        displayMask ("Display Mask", Int) = 1
     }
     SubShader
     {
@@ -30,8 +32,7 @@
 
             sampler2D _MainTex;
             float4 _InactiveColour;
-            int displayMask; // set to 1 to display texture, otherwise will draw test colour
-            
+            int displayMask;
 
             v2f vert (appdata v)
             {
@@ -50,5 +51,5 @@
             ENDCG
         }
     }
-    Fallback "Standard" // for shadows
+    Fallback "Standard"
 }
