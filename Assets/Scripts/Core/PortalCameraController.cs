@@ -13,17 +13,12 @@ public class PortalCameraController : MonoBehaviour
     
     void OnPreCull()
     {
-        // Render all portals before the main camera renders
-        if (portalRenderers != null)
+        if (portalRenderers == null || portalRenderers.Length == 0) return;
+        for (int i = 0; i < portalRenderers.Length; i++)
         {
-            Debug.Log("OnPreCull: Rendering portals...");
-            foreach (PortalRenderer renderer in portalRenderers)
-            {
-                if (renderer != null && renderer.enabled)
-                {
-                    renderer.RenderPortals();
-                }
-            }
+            var r = portalRenderers[i];
+            if (r != null && r.enabled)
+                r.RenderPortals();
         }
     }
 }

@@ -24,6 +24,8 @@ public class Portal : MonoBehaviour
     [HideInInspector]
     public PortalSurface portalSurface;
 
+    public static readonly List<Portal> ActivePortals = new List<Portal>(32);
+
     void Awake () {
         playerCam = Camera.main;
         portalCam = GetComponentInChildren<Camera> ();
@@ -39,6 +41,17 @@ public class Portal : MonoBehaviour
         if (portalCam != null) {
             portalCam.enabled = false;
         }
+    }
+
+    void OnEnable()
+    {
+        if (!ActivePortals.Contains(this))
+            ActivePortals.Add(this);
+    }
+
+    void OnDisable()
+    {
+        ActivePortals.Remove(this);
     }
 
     void LateUpdate () {
@@ -80,41 +93,22 @@ public class Portal : MonoBehaviour
 
     // Manually render the camera attached to this portal
     // Called after PrePortalRender, and before PostPortalRender
-    public void Render () {
-        // Skip rendering the view from this portal if player is not looking at the linked portal
-        if (!CameraUtility.VisibleFromCamera (linkedPortal.screen, playerCam)) {
+    public void Render ()
+    {
+        if (!CameraUtility.VisibleFromCamera (linkedPortal.screen, playerCam))
             return;
-        }
 
         CreateViewTexture ();
 
-        var localToWorldMatrix = playerCam.transform.localToWorldMatrix;
-        var renderPositions = new Vector3[recursionLimit];
-        var renderRotations = new Quaternion[recursionLimit];
+        // Solo se usa el primer nivel (optimizado para VR)
+        var mtx = transform.localToWorldMatrix * linkedPortal.transform.worldToLocalMatrix * playerCam.transform.localToWorldMatrix;
+        portalCam.transform.SetPositionAndRotation(mtx.GetColumn(3), mtx.rotation);
 
-        for (int i = 0; i < recursionLimit; i++) {
-            if (i > 0) {
-                // No need for recursive rendering in VR for now
-                break;
-            }
+        for (int j = 0; j < trackedTravellers.Count; j++)
+            UpdateSliceParams(trackedTravellers[j]);
 
-            localToWorldMatrix = transform.localToWorldMatrix * linkedPortal.transform.worldToLocalMatrix * localToWorldMatrix;
-            int renderOrderIndex = recursionLimit - i - 1;
-            renderPositions[renderOrderIndex] = localToWorldMatrix.GetColumn (3);
-            renderRotations[renderOrderIndex] = localToWorldMatrix.rotation;
-
-            portalCam.transform.SetPositionAndRotation (renderPositions[renderOrderIndex], renderRotations[renderOrderIndex]);
-            
-            for (int j = 0; j < trackedTravellers.Count; j++) {
-                UpdateSliceParams (trackedTravellers[j]);
-            }
-
-            portalCam.Render ();
-
-            if (i == 0) {
-                SetNearClipPlane ();
-            }
-        }
+        portalCam.Render();
+        SetNearClipPlane();
     }
 
     void HandleClipping () {
@@ -126,16 +120,28 @@ public class Portal : MonoBehaviour
         playerCam.projectionMatrix = playerCam.CalculateObliqueMatrix (CameraUtility.GetCameraPlaneCameraSpace (playerCam, transform.position, -transform.forward));
     }
     
-    void CreateViewTexture () {
-        if (viewTexture == null || viewTexture.width != Screen.width || viewTexture.height != Screen.height) {
-            if (viewTexture != null) {
-                viewTexture.Release ();
-            }
-            viewTexture = new RenderTexture (Screen.width, Screen.height, 0);
-            // Render the view from the portal camera to the view texture
+    void CreateViewTexture ()
+    {
+        int w = Screen.width;
+        int h = Screen.height;
+        if (viewTexture != null && (viewTexture.width != w || viewTexture.height != h))
+        {
+            viewTexture.Release();
+#if UNITY_EDITOR
+            DestroyImmediate(viewTexture);
+#else
+            Destroy(viewTexture);
+#endif
+            viewTexture = null;
+        }
+        if (viewTexture == null)
+        {
+            viewTexture = new RenderTexture(w, h, 0)
+            {
+                name = "Portal_ViewTex_" + name
+            };
             portalCam.targetTexture = viewTexture;
-            // Display the view texture on the screen of the linked portal
-            linkedPortal.screen.material.SetTexture ("_MainTex", viewTexture);
+            linkedPortal.screen.material.SetTexture("_MainTex", viewTexture);
         }
     }
 

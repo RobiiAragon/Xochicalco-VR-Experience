@@ -53,13 +53,13 @@ namespace Unity.VRTemplate
 
         void CheckLargeMovement()
         {
-            // Check if there is large movement
             var currentPosition = transform.position;
-            var positionDelta = Mathf.Abs(Vector3.Distance(m_LastPosition, currentPosition));
-            if (positionDelta > m_LargeMovementDistanceThreshold)
+            var sqrDelta = (m_LastPosition - currentPosition).sqrMagnitude;
+            if (sqrDelta > (m_LargeMovementDistanceThreshold * m_LargeMovementDistanceThreshold))
             {
-                m_LargeMovementCoolDown = 0.0f;
-                FacingExited();
+                m_LargeMovementCoolDown = 0f;
+                if (m_IsFacing)
+                    FacingExited();
             }
             m_LargeMovementCoolDown += Time.deltaTime;
             m_LastPosition = currentPosition;

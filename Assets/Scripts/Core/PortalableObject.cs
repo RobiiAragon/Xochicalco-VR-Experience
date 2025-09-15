@@ -96,20 +96,21 @@ public class PortalableObject : MonoBehaviour
     
     Portal FindClosestPortal()
     {
-        Portal[] portals = FindObjectsByType<Portal>(FindObjectsSortMode.None);
-        Portal closest = null;
-        float closestDistance = float.MaxValue;
-        
-        foreach (Portal portal in portals)
+        if (Portal.ActivePortals == null || Portal.ActivePortals.Count == 0) return null;
+        float best = float.MaxValue;
+        Portal bestPortal = null;
+        var p = transform.position;
+        for (int i = 0; i < Portal.ActivePortals.Count; i++)
         {
-            float distance = Vector3.Distance(transform.position, portal.transform.position);
-            if (distance < closestDistance)
+            var portal = Portal.ActivePortals[i];
+            if (portal == null) continue;
+            float d = (portal.transform.position - p).sqrMagnitude;
+            if (d < best)
             {
-                closestDistance = distance;
-                closest = portal;
+                best = d;
+                bestPortal = portal;
             }
         }
-        
-        return closest;
+        return bestPortal;
     }
 }

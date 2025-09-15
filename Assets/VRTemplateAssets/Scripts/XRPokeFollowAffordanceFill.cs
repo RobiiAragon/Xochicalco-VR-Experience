@@ -211,8 +211,11 @@ namespace Unity.VRTemplate
 
         void OnPokeStrengthChanged(float newStrength)
         {
-            var newX = m_PokeFillMaxSizeX * newStrength;
-            var newY = m_PokeFillMaxSizeY * newStrength;
+            if (m_PokeFill == null)
+                return;
+            var clamped = Mathf.Clamp01(newStrength);
+            var newX = m_PokeFillMaxSizeX * clamped;
+            var newY = m_PokeFillMaxSizeY * clamped;
             m_PokeFill.sizeDelta = new Vector2(newX, newY);
         }
 

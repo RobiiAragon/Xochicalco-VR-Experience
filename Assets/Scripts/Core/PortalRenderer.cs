@@ -33,6 +33,9 @@ public class PortalRenderer : MonoBehaviour
     private RenderTexture portalTexture;
     private Camera mainCamera;
     
+    int _lastW, _lastH;
+    bool _rtDirty;
+    
     void Start()
     {
         mainCamera = Camera.main;
@@ -77,55 +80,59 @@ public class PortalRenderer : MonoBehaviour
     void CreateRenderTexture()
     {
         int width, height;
-        
+
         if (useScreenScaleFactor)
         {
-            width = Mathf.RoundToInt(Screen.width * screenScaleFactor);
-            height = Mathf.RoundToInt(Screen.height * screenScaleFactor);
+            width = Mathf.Max(32, Mathf.RoundToInt(Screen.width * screenScaleFactor));
+            height = Mathf.Max(32, Mathf.RoundToInt(Screen.height * screenScaleFactor));
         }
         else
         {
             width = textureSize;
             height = textureSize;
         }
-        
+
+        if (portalTexture != null && width == _lastW && height == _lastH && portalTexture.format == renderTextureFormat)
+            return;
+
+        _lastW = width; _lastH = height;
+
         if (portalTexture != null)
-        {
             portalTexture.Release();
-        }
-        
-        portalTexture = new RenderTexture(width, height, 24, renderTextureFormat);
-        portalTexture.antiAliasing = antiAliasing;
-        portalTexture.Create();
-        
-        // Solo asignar si portalCamera no es null
-        if (portalCamera != null)
+
+        portalTexture = new RenderTexture(width, height, 24, renderTextureFormat)
         {
+            antiAliasing = Mathf.Max(1, antiAliasing),
+            name = "PortalRT_" + gameObject.name
+        };
+        portalTexture.Create();
+        if (portalCamera != null)
             portalCamera.targetTexture = portalTexture;
-        }
     }
     
     public void RenderPortals()
     {
-        if (mainCamera == null || portalCamera == null) 
-        {
-            Debug.LogWarning("PortalRenderer: mainCamera or portalCamera is null");
+        if (mainCamera == null || portalCamera == null || portals.Count == 0)
             return;
-        }
-        
-        Debug.Log($"RenderPortals called with {portals.Count} portals");
-        
-        foreach (Portal portal in portals)
+
+        if (_rtDirty)
         {
-            if (portal != null && portal.IsVisible(mainCamera))
-            {
-                Debug.Log($"Rendering portal: {portal.name}");
-                RenderPortal(portal);
-            }
-            else if (portal != null)
-            {
-                Debug.Log($"Portal {portal.name} is not visible");
-            }
+            _rtDirty = false;
+            CreateRenderTexture();
+        }
+
+        // Preparar planos de frustum una vez
+        var planes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
+
+        foreach (var portal in portals)
+        {
+            if (portal == null || portal.linkedPortal == null) continue;
+            // Visibilidad rápida
+            var scr = portal.screen;
+            if (scr == null) continue;
+            var rend = scr.GetComponent<Renderer>();
+            if (rend == null || !GeometryUtility.TestPlanesAABB(planes, rend.bounds)) continue;
+            RenderPortal(portal);
         }
     }
     
@@ -162,10 +169,26 @@ public class PortalRenderer : MonoBehaviour
     
     void OnValidate()
     {
-        // Solo recrear texture si estamos en Play Mode y tenemos todos los componentes
-        if (Application.isPlaying && portalCamera != null)
+        if (Application.isPlaying)
+            _rtDirty = true;
+    }
+
+    void OnDestroy()
+    {
+        if (portalTexture != null)
         {
-            CreateRenderTexture();
+            portalTexture.Release();
+#if UNITY_EDITOR
+            DestroyImmediate(portalTexture);
+#else
+            Destroy(portalTexture);
+#endif
         }
+        if (portalCamera != null)
+#if UNITY_EDITOR
+            DestroyImmediate(portalCamera.gameObject);
+#else
+            Destroy(portalCamera.gameObject);
+#endif
     }
 }

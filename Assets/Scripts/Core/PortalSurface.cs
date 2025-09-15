@@ -30,34 +30,34 @@ public class PortalSurface : MonoBehaviour
     
     private Renderer meshRenderer;
     private Material materialInstance;
+    float _maxDistSqr;
     
     void Awake()
     {
+        _maxDistSqr = maxRenderingDistance * maxRenderingDistance;
         meshRenderer = myMeshRenderer != null ? myMeshRenderer : GetComponent<Renderer>();
-        
         if (material != null && meshRenderer != null)
         {
             materialInstance = new Material(material);
             meshRenderer.material = materialInstance;
         }
     }
+
+    void OnValidate()
+    {
+        if (maxRenderingDistance < 0) maxRenderingDistance = 0;
+        _maxDistSqr = maxRenderingDistance * maxRenderingDistance;
+    }
     
     public void UpdateMaterial(RenderTexture portalTexture, Vector3 cameraPosition)
     {
-        if (materialInstance == null) 
-        {
-            Debug.LogWarning($"PortalSurface on {gameObject.name}: materialInstance is null");
-            return;
-        }
-        
-        Debug.Log($"UpdateMaterial called on {gameObject.name} with texture: {portalTexture != null}");
-        
-        // Set portal texture
+        if (materialInstance == null || meshRenderer == null) return;
+
         materialInstance.SetTexture("_MainTex", portalTexture);
-        
-        // Calculate distance to camera
-        float distance = Vector3.Distance(transform.position, cameraPosition);
-        float normalizedDistance = Mathf.Clamp01(distance / maxRenderingDistance);
+
+        var toCam = cameraPosition - transform.position;
+        float distSqr = toCam.sqrMagnitude;
+        float normalizedDistance = _maxDistSqr > 0.0001f ? Mathf.Clamp01(distSqr / _maxDistSqr) : 0f;
         
         // Update material properties based on distance
         if (useColorBlending)
@@ -80,14 +80,10 @@ public class PortalSurface : MonoBehaviour
         }
         
         // Disable rendering if too far
-        if (distance > maxRenderingDistance)
-        {
+        if (distSqr > _maxDistSqr)
             meshRenderer.enabled = false;
-        }
-        else
-        {
+        else if (!meshRenderer.enabled)
             meshRenderer.enabled = true;
-        }
     }
     
     [ContextMenu("Reset Color Blending Curve")]

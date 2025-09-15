@@ -27,14 +27,38 @@ namespace Unity.VRTemplate
         [Tooltip("The bit depth of the depth channel for the RenderTexture which will be created.")]
         int m_RenderTextureDepth;
 
+        RenderTexture _rt;
+        Material _mat;
+
         void Start()
         {
-            var renderTexture = new RenderTexture(m_RenderTextureWidth, m_RenderTextureHeight, m_RenderTextureDepth);
-            renderTexture.Create();
-            var material = new Material(Shader.Find(k_ShaderName));
-            material.mainTexture = renderTexture;
-            GetComponent<VideoPlayer>().targetTexture = renderTexture;
-            m_Renderer.material = material;
+            _rt = new RenderTexture(m_RenderTextureWidth, m_RenderTextureHeight, m_RenderTextureDepth);
+            _rt.Create();
+            _mat = new Material(Shader.Find(k_ShaderName));
+            _mat.mainTexture = _rt;
+            var vp = GetComponent<VideoPlayer>();
+            vp.targetTexture = _rt;
+            if (m_Renderer != null)
+                m_Renderer.material = _mat;
+        }
+
+        void OnDestroy()
+        {
+            if (_rt != null)
+            {
+                if (_rt.IsCreated()) _rt.Release();
+#if UNITY_EDITOR
+                DestroyImmediate(_rt);
+#else
+                Destroy(_rt);
+#endif
+            }
+            if (_mat != null)
+#if UNITY_EDITOR
+                DestroyImmediate(_mat);
+#else
+                Destroy(_mat);
+#endif
         }
     }
 }

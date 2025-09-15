@@ -5,10 +5,12 @@ public class PortalTransporter : MonoBehaviour
 {
     private Portal portal;
     private List<PortalableObject> objectsInPortal = new List<PortalableObject>();
+    Plane _portalPlane;
     
     void Awake()
     {
         portal = GetComponent<Portal>();
+        _portalPlane = new Plane(transform.forward, transform.position);
         
         // Ensure we have required components
         if (GetComponent<Collider>() == null)
@@ -46,35 +48,33 @@ public class PortalTransporter : MonoBehaviour
     void Update()
     {
         if (portal == null || portal.linkedPortal == null) return;
-        
-        // Check for teleportation
+
+        // Actualizar plano si el portal se mueve
+        if (transform.hasChanged)
+        {
+            _portalPlane.SetNormalAndPosition(transform.forward, transform.position);
+            transform.hasChanged = false;
+        }
+
         for (int i = objectsInPortal.Count - 1; i >= 0; i--)
         {
-            PortalableObject obj = objectsInPortal[i];
+            var obj = objectsInPortal[i];
             if (obj == null)
             {
                 objectsInPortal.RemoveAt(i);
                 continue;
             }
-            
-            if (obj.portallingEnabled && ShouldTeleport(obj))
+
+            if (!obj.portallingEnabled) continue;
+
+            // Usa signo del lado del plano
+            float sideNow = _portalPlane.GetDistanceToPoint(obj.transform.position);
+            if (sideNow < 0f) // cruzó
             {
                 TeleportObject(obj);
                 objectsInPortal.RemoveAt(i);
             }
         }
-    }
-    
-    bool ShouldTeleport(PortalableObject obj)
-    {
-        // Check if object has crossed the portal plane
-        Vector3 objPosition = obj.transform.position;
-        
-        // Get the position relative to portal
-        Vector3 localPos = transform.InverseTransformPoint(objPosition);
-        
-        // If the object is behind the portal (negative Z), it should teleport
-        return localPos.z < 0;
     }
     
     void TeleportObject(PortalableObject obj)

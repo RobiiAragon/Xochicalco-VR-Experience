@@ -23,7 +23,7 @@ public class PortalTraveller : MonoBehaviour
         originalMaterials = new Material[originalRenderers.Length];
         
         for (int i = 0; i < originalRenderers.Length; i++) {
-            originalMaterials[i] = originalRenderers[i].material;
+            originalMaterials[i] = originalRenderers[i].sharedMaterial;
         }
     }
 
@@ -37,9 +37,8 @@ public class PortalTraveller : MonoBehaviour
             graphicsClone = Instantiate(graphicsObject);
             cloneRenderers = graphicsClone.GetComponentsInChildren<MeshRenderer>();
             cloneMaterials = new Material[cloneRenderers.Length];
-            
             for (int i = 0; i < cloneRenderers.Length; i++) {
-                cloneMaterials[i] = cloneRenderers[i].material;
+                cloneMaterials[i] = cloneRenderers[i].sharedMaterial;
             }
         }
         graphicsClone.transform.parent = graphicsObject.transform.parent;
@@ -48,7 +47,12 @@ public class PortalTraveller : MonoBehaviour
 
     public virtual void ExitPortalThreshold() {
         if (graphicsClone != null) {
+#if UNITY_EDITOR
             DestroyImmediate(graphicsClone);
+#else
+            Destroy(graphicsClone);
+#endif
+            graphicsClone = null;
         }
     }
 
