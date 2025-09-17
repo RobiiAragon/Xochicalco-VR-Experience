@@ -25,11 +25,19 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
         const string k_HandsPackageName = "com.unity.xr.hands";
         const string k_XRIPackageName = "com.unity.xr.interaction.toolkit";
         const string k_ShaderGraphPackageName = "com.unity.shadergraph";
+        const int k_RequestTimeoutSeconds = 10;
+        const float k_RequestRetryInterval = 0.5f;
+        
         static readonly PackageVersion s_MinimumHandsPackageVersion = new PackageVersion("1.5.1");
         static readonly PackageVersion s_RecommendedHandsPackageVersion = new PackageVersion("1.6.1");
 
         static readonly BuildTargetGroup[] s_BuildTargetGroups =
             ((BuildTargetGroup[])Enum.GetValues(typeof(BuildTargetGroup))).Distinct().ToArray();
+
+        // Cache for package validation results
+        static readonly Dictionary<string, (bool isValid, DateTime lastCheck)> s_ValidationCache = 
+            new Dictionary<string, (bool, DateTime)>();
+        static readonly TimeSpan s_CacheExpiry = TimeSpan.FromMinutes(5);
 
         static readonly List<BuildValidationRule> s_BuildValidationRules = new List<BuildValidationRule>
         {
@@ -38,7 +46,7 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
                 IsRuleEnabled = () => s_HandsPackageAddRequest == null || s_HandsPackageAddRequest.IsCompleted,
                 Message = $"[{k_SampleDisplayName}] XR Hands ({k_HandsPackageName}) package must be installed or updated to use this sample.",
                 Category = k_Category,
-                CheckPredicate = () => PackageVersionUtility.GetPackageVersion(k_HandsPackageName) >= s_MinimumHandsPackageVersion,
+                CheckPredicate = () => IsPackageVersionValid(k_HandsPackageName, s_MinimumHandsPackageVersion),
                 FixIt = () =>
                 {
                     if (s_HandsPackageAddRequest == null || s_HandsPackageAddRequest.IsCompleted)
@@ -52,7 +60,7 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
                 IsRuleEnabled = () => s_HandsPackageAddRequest == null || s_HandsPackageAddRequest.IsCompleted,
                 Message = $"[{k_SampleDisplayName}] XR Hands ({k_HandsPackageName}) package must be at version {s_RecommendedHandsPackageVersion} or higher to use the latest sample features.",
                 Category = k_Category,
-                CheckPredicate = () => PackageVersionUtility.GetPackageVersion(k_HandsPackageName) >= s_RecommendedHandsPackageVersion,
+                CheckPredicate = () => IsPackageVersionValid(k_HandsPackageName, s_RecommendedHandsPackageVersion),
                 FixIt = () =>
                 {
                     if (s_HandsPackageAddRequest == null || s_HandsPackageAddRequest.IsCompleted)
@@ -126,6 +134,21 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
             EditorApplication.delayCall += ShowWindowIfIssuesExist;
         }
 
+        static bool IsPackageVersionValid(string packageName, PackageVersion requiredVersion)
+        {
+            string cacheKey = $"{packageName}_{requiredVersion}";
+            
+            if (s_ValidationCache.TryGetValue(cacheKey, out var cached))
+            {
+                if (DateTime.Now - cached.lastCheck < s_CacheExpiry)
+                    return cached.isValid;
+            }
+
+            bool isValid = PackageVersionUtility.GetPackageVersion(packageName) >= requiredVersion;
+            s_ValidationCache[cacheKey] = (isValid, DateTime.Now);
+            return isValid;
+        }
+
         static void ShowWindowIfIssuesExist()
         {
             foreach (var validation in s_BuildValidationRules)
@@ -144,7 +167,14 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
             // project validation window causing serialized objects to be nullified.
             EditorApplication.delayCall += () =>
             {
-                SettingsService.OpenProjectSettings(k_ProjectValidationSettingsPath);
+                try
+                {
+                    SettingsService.OpenProjectSettings(k_ProjectValidationSettingsPath);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to open project validation window: {e.Message}");
+                }
             };
         }
 
@@ -192,36 +222,56 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples.Hands.Editor
 
         static void InstallOrUpdateHands()
         {
-            // Set a 3-second timeout for request to avoid editor lockup
-            var currentTime = DateTime.Now;
-            var endTime = currentTime + TimeSpan.FromSeconds(3);
-
-            var request = Client.Search(k_HandsPackageName);
-            if (request.Status == StatusCode.InProgress)
+            try
             {
-                Debug.Log($"Searching for ({k_HandsPackageName}) in Unity Package Registry.");
-                while (request.Status == StatusCode.InProgress && currentTime < endTime)
-                    currentTime = DateTime.Now;
-            }
+                var currentTime = DateTime.Now;
+                var endTime = currentTime + TimeSpan.FromSeconds(k_RequestTimeoutSeconds);
 
-            var addRequest = k_HandsPackageName;
-            if (request.Status == StatusCode.Success && request.Result.Length > 0)
-            {
-                var versions = request.Result[0].versions;
+                var request = Client.Search(k_HandsPackageName);
+                if (request.Status == StatusCode.InProgress)
+                {
+                    Debug.Log($"Searching for ({k_HandsPackageName}) in Unity Package Registry.");
+                    
+                    while (request.Status == StatusCode.InProgress && currentTime < endTime)
+                    {
+                        System.Threading.Thread.Sleep((int)(k_RequestRetryInterval * 1000));
+                        currentTime = DateTime.Now;
+                    }
+
+                    if (currentTime >= endTime)
+                    {
+                        Debug.LogWarning($"Timeout while searching for package {k_HandsPackageName}");
+                        return;
+                    }
+                }
+
+                var addRequest = k_HandsPackageName;
+                if (request.Status == StatusCode.Success && request.Result.Length > 0)
+                {
+                    var versions = request.Result[0].versions;
 #if UNITY_2022_2_OR_NEWER
-                var recommendedVersion = new PackageVersion(versions.recommended);
+                    var recommendedVersion = new PackageVersion(versions.recommended);
 #else
-                var recommendedVersion = new PackageVersion(versions.verified);
+                    var recommendedVersion = new PackageVersion(versions.verified);
 #endif
-                var latestCompatible = new PackageVersion(versions.latestCompatible);
-                if (recommendedVersion < s_RecommendedHandsPackageVersion && s_RecommendedHandsPackageVersion <= latestCompatible)
-                    addRequest = $"{k_HandsPackageName}@{s_RecommendedHandsPackageVersion}";
-            }
+                    var latestCompatible = new PackageVersion(versions.latestCompatible);
+                    if (recommendedVersion < s_RecommendedHandsPackageVersion && s_RecommendedHandsPackageVersion <= latestCompatible)
+                        addRequest = $"{k_HandsPackageName}@{s_RecommendedHandsPackageVersion}";
+                }
 
-            s_HandsPackageAddRequest = Client.Add(addRequest);
-            if (s_HandsPackageAddRequest.Error != null)
+                s_HandsPackageAddRequest = Client.Add(addRequest);
+                if (s_HandsPackageAddRequest.Error != null)
+                {
+                    Debug.LogError($"Package installation error: {s_HandsPackageAddRequest.Error}: {s_HandsPackageAddRequest.Error.message}");
+                }
+                else
+                {
+                    Debug.Log($"Successfully initiated installation of {addRequest}");
+                }
+            }
+            catch (Exception e)
             {
-                Debug.LogError($"Package installation error: {s_HandsPackageAddRequest.Error}: {s_HandsPackageAddRequest.Error.message}");
+                Debug.LogError($"Exception during package installation: {e.Message}");
             }
         }
 

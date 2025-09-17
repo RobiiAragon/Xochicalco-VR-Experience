@@ -1,3 +1,143 @@
-# Xochicalco-VR-Experience
+# Xochicalco VR Project
 
-Demo de experiencia VR para dar a conocer la nueva carrera de videojuegos en la Universidad Xochicalco campus Tijuana
+Un proyecto de realidad virtual desarrollado en Unity, inspirado en el sitio arqueológico de Xochicalco.
+
+## 🎯 Características
+
+- **Experiencia VR inmersiva** usando XR Interaction Toolkit
+- **Shaders personalizados** con efectos de portal optimizados
+- **Interacciones con las manos** usando XR Hands
+- **Arquitectura modular** para fácil mantenimiento
+
+## 🛠️ Requisitos del Sistema
+
+### Software
+- Unity 2022.3 LTS o superior
+- XR Interaction Toolkit 3.2.1+
+- XR Hands 1.6.1+
+- Universal Render Pipeline (URP)
+
+### Hardware
+- Dispositivos VR compatibles (Meta Quest, HTC Vive, etc.)
+- PC con especificaciones mínimas para VR
+
+## 🚀 Instalación
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone [repository-url]
+   cd Xochicalco
+   ```
+
+2. **Abrir en Unity**
+   - Abrir Unity Hub
+   - Seleccionar "Add project from disk"
+   - Navegar a la carpeta del proyecto
+
+3. **Configurar XR**
+   - El proyecto debería auto-configurar las dependencias
+   - Verificar en Project Validation (Window > XR > Project Validation)
+
+## 📁 Estructura del Proyecto
+
+```
+Assets/
+├── Scenes/                 # Escenas principales
+├── Scripts/               # Scripts de C#
+├── Shaders/              # Shaders personalizados
+│   └── Portal.shader     # Shader optimizado para portales
+├── Materials/            # Materiales del proyecto
+├── Prefabs/              # Prefabs reutilizables
+├── Textures/             # Texturas y assets visuales
+└── VRTemplateAssets/     # Assets del template VR
+```
+
+## 🎨 Shaders Personalizados
+
+### Portal Shader
+- **Ubicación**: `Assets/Shaders/Portal.shader`
+- **Características**:
+  - Efectos de distorsión con ruido fractal
+  - Efectos Fresnel para realismo
+  - Animaciones de pulso configurables
+  - Optimizado para VR (instancing, stereo rendering)
+
+## ⚙️ Optimizaciones Implementadas
+
+### Rendimiento
+- **GPU Instancing** habilitado en shaders
+- **Cache de validación** para Package Manager
+- **Timeout management** en requests de red
+- **Stereo rendering** optimizado
+
+### Calidad Visual
+- **Ruido fractal** multi-octava
+- **Interpolación mejorada** en funciones de ruido
+- **Efectos Fresnel** para mayor realismo
+- **Blending optimizado** para transparencias
+
+## 🔧 Configuración de Desarrollo
+
+### Editor Layout
+El proyecto incluye un layout personalizado (`TutorialLayout.wlt`) optimizado para desarrollo VR:
+- Panel de Tutorial visible
+- Jerarquía y Project optimizados
+- Inspector configurado para componentes VR
+
+### Project Validation
+Sistema automático que verifica:
+- Instalación de paquetes requeridos
+- Versiones correctas de dependencias
+- Importación de samples necesarios
+
+## 🎮 Uso
+
+1. **Configurar dispositivo VR**
+2. **Abrir escena principal**
+3. **Presionar Play** en el editor
+4. **Usar controles VR** para interactuar
+
+## 🐛 Troubleshooting
+
+### Problemas Comunes
+
+**Error: XR Hands no encontrado**
+- Solución: Ejecutar Project Validation (Window > XR > Project Validation)
+
+**Shader no compila**
+- Verificar que URP esté configurado
+- Revisar compatibilidad con versión de Unity
+
+**Performance issues en VR**
+- Reducir calidad de shaders
+- Verificar configuración de render pipeline
+
+## 📈 Roadmap
+
+- [ ] Implementar audio espacial
+- [ ] Agregar más interacciones con objetos
+- [ ] Optimizar para dispositivos móviles VR
+- [ ] Implementar sistema de logros
+- [ ] Agregar modo multijugador
+
+## 🤝 Contribución
+
+1. Fork del proyecto
+2. Crear branch para feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit de cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push al branch (`git push origin feature/nueva-funcionalidad`)
+5. Crear Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+
+## 📞 Contacto
+
+- **Desarrollador**: Robii
+- **Año**: 2025
+- **Inspiración**: Sitio arqueológico de Xochicalco, México
+
+---
+
+*Desarrollado con ❤️ para preservar y compartir el patrimonio cultural mexicano en realidad virtual.*
