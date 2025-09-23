@@ -6,6 +6,9 @@ using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.SceneManagement;
+using UnityEditor;
+using System.Reflection; // ADDED
 
 #if UNITY_INPUT_SYSTEM_PROJECT_WIDE_ACTIONS
 using UnityEngine.InputSystem;
@@ -53,6 +56,20 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples
         {
             if (s_BuildValidationRules.Count == 0)
             {
+                // NEW RULE: Detect missing (Unknown) scripts that trigger XR init warnings.
+                s_BuildValidationRules.Add(
+                    new BuildValidationRule
+                    {
+                        Category = k_Category,
+                        Message = $"[{k_StarterAssetsSampleName}] There are GameObjects with missing scripts in the open scenes.",
+                        FixItMessage = "Remove all missing script components from open scenes.",
+                        HelpText = "Missing (Unknown) MonoBehaviour references produce 'referenced script is missing' warnings during XR startup. They usually appear after deleting or renaming scripts or upgrading packages.",
+                        CheckPredicate = () => !HasMissingScriptsInOpenScenes(),
+                        FixIt = FixMissingScriptsInOpenScenes,
+                        FixItAutomatic = true,
+                        Error = false,
+                    });
+
                 s_BuildValidationRules.Add(
                     new BuildValidationRule
                     {
@@ -109,6 +126,20 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples
                         Error = InputSystem.actions != null && (InputSystem.actions.name == k_InputActionAssetName || AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(InputSystem.actions)) == k_InputActionAssetGuid),
                     });
 #endif
+
+                // NEW RULE: URP RenderGraph migration reminder.
+                s_BuildValidationRules.Add(
+                    new BuildValidationRule
+                    {
+                        Category = k_Category,
+                        Message = "[RenderGraph] Universal RP is in legacy compatibility mode. Migrate custom ScriptableRenderPasses to RenderGraph and re-enable it.",
+                        HelpText = "RenderGraph compatibility mode will be removed. After migrating Portal / custom passes, enable RenderGraph and disable compatibility mode.",
+                        CheckPredicate = () => !IsRenderGraphCompatibilityModeEnabled(),
+                        FixItMessage = "Enable RenderGraph and disable compatibility mode now.",
+                        FixItAutomatic = true,
+                        Error = false,
+                        FixIt = EnableRenderGraphAndDisableCompatibilityMode
+                    });
             }
 
             foreach (var buildTargetGroup in s_BuildTargetGroups)
@@ -191,5 +222,212 @@ namespace UnityEditor.XR.Interaction.Toolkit.Samples
             }
         }
 #endif
+
+// --- Added helper methods for missing script detection/cleanup ---
+#if UNITY_EDITOR
+        static void FixMissingScriptsInOpenScenes()
+        {
+            // NEW: Log detallado antes de limpiar
+            LogMissingScriptsDetailed();
+
+            int totalRemoved = 0;
+            Undo.IncrementCurrentGroup();
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded)
+                    continue;
+                var roots = scene.GetRootGameObjects();
+                for (int r = 0; r < roots.Length; r++)
+                    totalRemoved += GameObjectUtility.RemoveMonoBehavioursWithMissingScript(roots[r]);
+            }
+
+            // Also attempt removal on DontDestroyOnLoad objects
+            foreach (var go in GetDontDestroyOnLoadRoots())
+                totalRemoved += GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
+
+            if (totalRemoved > 0)
+                Debug.Log($"[{k_StarterAssetsSampleName}] Removed {totalRemoved} missing script component(s).");
+            else
+                Debug.Log($"[{k_StarterAssetsSampleName}] No missing scripts found to remove.");
+        }
+
+        // NEW: Reemplaza antigua lógica para usar enumeración completa (incluye DontDestroyOnLoad)
+        static bool HasMissingScriptsInOpenScenes()
+        {
+            foreach (var go in EnumerateLoadedSceneObjects(includeDontDestroy: true))
+            {
+                var comps = go.GetComponents<Component>();
+                for (int i = 0; i < comps.Length; i++)
+                    if (comps[i] == null)
+                        return true;
+            }
+            return false;
+        }
+
+        // NEW helper: log rutas de objetos con componentes faltantes
+        static void LogMissingScriptsDetailed()
+        {
+            int count = 0;
+            foreach (var go in EnumerateLoadedSceneObjects(includeDontDestroy: true))
+            {
+                var comps = go.GetComponents<Component>();
+                for (int i = 0; i < comps.Length; i++)
+                {
+                    if (comps[i] == null)
+                    {
+                        if (count == 0)
+                            Debug.LogWarning($"[{k_StarterAssetsSampleName}] Missing scripts detected (listing all before cleanup):");
+                        Debug.LogWarning($"  • {GetFullPath(go)} (Missing Component index {i})", go);
+                        count++;
+                    }
+                }
+            }
+            if (count == 0)
+                Debug.Log($"[{k_StarterAssetsSampleName}] No missing scripts detected.");
+        }
+
+        // Enumerate all runtime objects (ignore assets/prefabs not instantiated)
+        static IEnumerable<GameObject> EnumerateLoadedSceneObjects(bool includeDontDestroy)
+        {
+            var all = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (var go in all)
+            {
+                if (go == null) continue;
+                if (EditorUtility.IsPersistent(go)) continue; // skip assets
+                var scene = go.scene;
+                if (scene != null && scene.IsValid() && scene.isLoaded)
+                    yield return go;
+                else if (includeDontDestroy && IsDontDestroyOnLoad(go))
+                    yield return go;
+            }
+        }
+
+        static IEnumerable<GameObject> GetDontDestroyOnLoadRoots()
+        {
+            return Resources.FindObjectsOfTypeAll<GameObject>()
+                .Where(IsDontDestroyOnLoad)
+                .Select(g => g.transform.root.gameObject)
+                .Distinct();
+        }
+
+        static bool IsDontDestroyOnLoad(GameObject go)
+        {
+            return go.scene.buildIndex == -1 && !EditorUtility.IsPersistent(go);
+        }
+
+        static string GetFullPath(GameObject go)
+        {
+            var stack = new System.Text.StringBuilder(go.name);
+            var t = go.transform.parent;
+            while (t != null)
+            {
+                stack.Insert(0, t.name + "/");
+                t = t.parent;
+            }
+            return stack.ToString();
+        }
+
+        // --- Added helpers for RenderGraph rule ---
+        static bool IsRenderGraphCompatibilityModeEnabled()
+        {
+            // Fully reflection-based to avoid hard dependency on URP assembly.
+            var settingsType = Type.GetType("UnityEngine.Rendering.Universal.UniversalRenderPipelineGlobalSettings, Unity.RenderPipelines.Universal.Runtime", false);
+            if (settingsType == null)
+                return false; // URP not present, do not block.
+
+            var instanceProp = settingsType.GetProperty("instance", BindingFlags.Public | BindingFlags.Static);
+            var settings = instanceProp?.GetValue(null);
+            if (settings == null)
+                return false;
+
+            try
+            {
+                var enableRGField = settingsType.GetField("m_EnableRenderGraph", BindingFlags.NonPublic | BindingFlags.Instance);
+                bool rgEnabled = enableRGField != null && (bool)enableRGField.GetValue(settings);
+
+                var rgProp = settingsType.GetProperty("renderGraphSettings", BindingFlags.Public | BindingFlags.Instance);
+                if (rgProp != null)
+                {
+                    var rgStruct = rgProp.GetValue(settings);
+                    if (rgStruct != null)
+                    {
+                        var compatField = rgStruct.GetType().GetField("m_EnableRenderCompatibilityMode", BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (compatField != null)
+                        {
+                            bool compat = (bool)compatField.GetValue(rgStruct);
+                            return compat || !rgEnabled;
+                        }
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        static void EnableRenderGraphAndDisableCompatibilityMode()
+        {
+            var settingsType = Type.GetType("UnityEngine.Rendering.Universal.UniversalRenderPipelineGlobalSettings, Unity.RenderPipelines.Universal.Runtime", false);
+            if (settingsType == null)
+            {
+                Debug.LogWarning("[RenderGraph] URP Global Settings type not found (URP not installed?).");
+                return;
+            }
+
+            var instanceProp = settingsType.GetProperty("instance", BindingFlags.Public | BindingFlags.Static);
+            var settings = instanceProp?.GetValue(null);
+            if (settings == null)
+            {
+                Debug.LogWarning("[RenderGraph] URP Global Settings instance not found.");
+                return;
+            }
+
+            bool modified = false;
+
+            try
+            {
+                var enableRGField = settingsType.GetField("m_EnableRenderGraph", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (enableRGField != null && !(bool)enableRGField.GetValue(settings))
+                {
+                    enableRGField.SetValue(settings, true);
+                    modified = true;
+                }
+
+                var rgProp = settingsType.GetProperty("renderGraphSettings", BindingFlags.Public | BindingFlags.Instance);
+                if (rgProp != null)
+                {
+                    var rgStruct = rgProp.GetValue(settings);
+                    if (rgStruct != null)
+                    {
+                        var compatField = rgStruct.GetType().GetField("m_EnableRenderCompatibilityMode", BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (compatField != null && (bool)compatField.GetValue(rgStruct))
+                        {
+                            compatField.SetValueDirect(__makeref(rgStruct), false);
+                            rgProp.SetValue(settings, rgStruct);
+                            modified = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[RenderGraph] Reflection update failed: {e.Message}");
+            }
+
+            if (modified)
+            {
+                EditorUtility.SetDirty((UnityEngine.Object)settings);
+                AssetDatabase.SaveAssets();
+                Debug.Log("[RenderGraph] Enabled RenderGraph and disabled compatibility mode (reflection).");
+            }
+            else
+            {
+                Debug.Log("[RenderGraph] No changes applied (already configured or fields inaccessible).");
+            }
+        }
+#endif
     }
 }
+
+// NOTE RenderGraph Migration:
+// Cuando termines de migrar los passes (PortalRenderer) ejecuta FixIt de la regla "[RenderGraph]" para activar RenderGraph y apagar Compatibility.

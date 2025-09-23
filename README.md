@@ -112,6 +112,40 @@ Sistema automático que verifica:
 - Reducir calidad de shaders
 - Verificar configuración de render pipeline
 
+## 🐛 Problema: Artefacto solo en Ojo Izquierdo al Cruzar Portales
+
+Cuando el portal se ve bien en el ojo derecho pero en el izquierdo aparece recorte / desplazamiento:
+
+Causas típicas:
+1. Se usa cámara auxiliar y solo se actualiza con Camera.StereoscopicEye.Right.
+2. Se fuerza camera.projectionMatrix en lugar de usar GetStereoProjectionMatrix / GetStereoViewMatrix por ojo.
+3. RenderTexture compartido sin habilitar VR instancing (dimension = 2D en vez de Tex2DArray).
+4. Falta de ajustar el clip plane / oblique matrix por ojo.
+5. Pass personalizado ejecutado después de que URP ya resolvió el target (en modo compatibility) y lee solo el color del último ojo.
+
+Checklist rápido:
+- Asegura XRGraphics.stereoRenderingMode == SinglePassInstanced (o MultiPass soportado correctamente).
+- En el código del portal, para cada ojo:
+  var view = cam.GetStereoViewMatrix(eye);
+  var proj = cam.GetStereoProjectionMatrix(eye);
+  var vp = proj * view;
+- Si usas RenderTexture manual: rt.vrUsage = VRTextureUsage.TwoEyes; (o usa XRSystem target de URP).
+- Evita Graphics.SetRenderTarget manual entre ojos; usa CommandBuffer y deja que URP gestione.
+- Si reconstruyes matrices oblicuas:
+  Matrix4x4.AdjustProjectionMatrix(proj, clipPlane) por ojo, no reutilices la del derecho.
+- Verifica que no caches transformaciones del frame previo del ojo derecho para el izquierdo.
+
+Cómo depurar rápido:
+1. Activa Frame Debugger y filtra hasta tu pass de portal: ¿se ejecuta 2 veces (Left/Right)? Debe hacerlo.
+2. Log temporal:
+   Debug.Log($"Portal Eye {eye} VP hash {vp.GetHashCode()}");
+   Si ambos hashes son iguales algo está mal (deben diferir ligeramente en X).
+3. Activa modo Wireframe para ver si el quad del portal se desplaza solo en un ojo (parallax incorrecto).
+
+Si el problema persiste antes de migrar a RenderGraph:
+- Forzar m_EnableRenderGraph = 1 puede hacer más evidente el error (cada eye pass separado).
+- Revisa scripts faltantes (regla de validación ahora lista cada objeto con componentes Missing antes de limpiar).
+
 ## 📈 Roadmap
 
 - [ ] Implementar audio espacial
@@ -134,9 +168,9 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 
 ## 📞 Contacto
 
-- **Desarrollador**: Robii
+- **Desarrollador**: Jesus Roberto Aragon Lopez
 - **Año**: 2025
-- **Inspiración**: Sitio arqueológico de Xochicalco, México
+- **Inspiración**: Universidad Tecnologica de Tijuana / Xochicalco Universidad, México
 
 ---
 
