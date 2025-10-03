@@ -921,7 +921,7 @@ namespace Fragilem17.MirrorsAndPortals
             PortalSurface parentSurface = null,
             PortalSurface parentsParentSurface = null,
             PortalSurface parentsParentsParentSurface = null,
-            PortalSurface parentsParentsParentsParentSurface = null)
+            PortalSurface parentsParentsParentsParentMirrorSurface = null)
         {
             _reflectionCamera.ResetWorldToCameraMatrix();
 
@@ -1150,12 +1150,12 @@ namespace Fragilem17.MirrorsAndPortals
 
 
                                 //Debug.Log("Found Mirror: " + portalSurface.Portal.name + " depth: " + depth + " parent: " + parentSurface?.Portal.name +" : "+ nearClipOffset +" : " + myDistance);
-                                cameraMatricesInOrder.Add(new CameraPortalMatrices(newProjectionMatrix, newWorldToCameraMatrix, newCullingMatrix, portalSurface, depth % 2 != 0, newPos, newRot, newNearClip, newFarClip, depth, myDistance, parentSurface, parentsParentSurface, parentsParentsParentSurface, parentsParentsParentsParentSurface));
+                                cameraMatricesInOrder.Add(new CameraPortalMatrices(newProjectionMatrix, newWorldToCameraMatrix, newCullingMatrix, portalSurface, depth % 2 != 0, newPos, newRot, newNearClip, newFarClip, depth, myDistance, parentSurface, parentsParentSurface, parentsParentsParentMirrorSurface, parentsParentsParentsParentMirrorSurface));
                             }
                             else
                             {
                                 //Debug.Log("to far: " + portalSurface.Portal.name + " : " + depth + " : " + myDistance + " : " + portalSurface.maxRenderingDistance);
-                                cameraMatricesInOrder.Add(new CameraPortalMatrices(Matrix4x4.identity, Matrix4x4.identity, Matrix4x4.identity, portalSurface, true, Vector3.zero, Quaternion.identity, 0.1f, 10f, recursions + 1, myDistance, parentSurface, parentsParentSurface, parentsParentsParentSurface, parentsParentsParentsParentSurface));
+                                cameraMatricesInOrder.Add(new CameraPortalMatrices(Matrix4x4.identity, Matrix4x4.identity, Matrix4x4.identity, portalSurface, true, Vector3.zero, Quaternion.identity, 0.1f, 10f, recursions + 1, myDistance, parentSurface, parentsParentSurface, parentsParentsParentMirrorSurface, parentsParentsParentsParentMirrorSurface));
                             }
                         }
                     }
@@ -1299,19 +1299,11 @@ namespace Fragilem17.MirrorsAndPortals
                     GetFreeTexture(out _ptex, eye);
                     _ptex.matrices = matrices;
 
-                    //Debug.Log(" depth: " + matrices.depth + " render op: " + matrices.mirrorSurface.name + " VOOR parent: " + matrices.parentMirrorSurface?.name + " using tex: " + _ptex.texture.name + " parentsParent: "+ matrices.parentsParentMirrorSurface);
-
-                    _ptex.liteLock = true;
-
-                    if (matrices.parentMirrorSurface == null)
+                    // Ensure the render texture is properly resolved
+                    if (_ptex.texture != null && !_ptex.texture.IsCreated())
                     {
-                        _pooledTextures.ForEach(pTex => {
-                            pTex.liteLock = false;
-                        });
-                        _ptex.fullLock = true;
+                        _ptex.texture.Create();
                     }
-
-
 
                     reflectionCamera.targetTexture = _ptex.texture;
                     reflectionCamera.worldToCameraMatrix = matrices.worldToCameraMatrix;
@@ -1354,7 +1346,15 @@ namespace Fragilem17.MirrorsAndPortals
                         _skyboxReflectionCam.material = skyboxMaterial;
                     }
 
-                    UniversalRenderPipeline.RenderSingleCamera(src, reflectionCamera);
+                    try
+                    {
+                        UniversalRenderPipeline.RenderSingleCamera(src, reflectionCamera);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error rendering portal camera: {ex.Message}");
+                    }
+
                     matrices.mirrorSurface.UpdateMaterial(eye, _ptex.texture, this, matrices.depth, matrices.distance);
 
                     // reset the material to the one with the lowest depth
