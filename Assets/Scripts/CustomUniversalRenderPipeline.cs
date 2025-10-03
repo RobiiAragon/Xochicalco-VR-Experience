@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -22,14 +21,6 @@ public static class CustomUniversalRenderPipeline
             UniversalRenderPipeline.RenderSingleCameraInternal(context, camera, ref additionalCameraData, isLastBaseCamera);
 
             cmd.EndSample("RenderSingleCamera");
-            context.ExecuteCommandBuffer(cmd);
-        }
-        finally
-        {
-            CommandBufferPool.Release(cmd);
-        }
-    }
-}
             context.ExecuteCommandBuffer(cmd);
         }
         finally

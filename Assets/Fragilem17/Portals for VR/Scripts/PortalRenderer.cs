@@ -1359,12 +1359,12 @@ namespace Fragilem17.MirrorsAndPortals
                     matrices.mirrorSurface.UpdateMaterial(eye, _ptex.texture, this, matrices.depth, matrices.distance);
 
                     // reset the material to the one with the lowest depth
-                    List<CameraPortalMatrices> li = cameraMatricesInOrder.FindAll(x => x.depth == matrices.depth
-                        && x.depth == matrices.depth
-                        && x.parentMirrorSurface == matrices.parentMirrorSurface
-                        && x.parentsParentMirrorSurface == matrices.parentsParentMirrorSurface
-                        && x.parentsParentsParentMirrorSurface == matrices.parentsParentsParentMirrorSurface
-                        && x.parentsParentsParentsParentMirrorSurface == matrices.parentsParentsParentsParentMirrorSurface);
+                    List<CameraPortalMatrices> li = cameraMatricesInOrder.FindAll(x =>
+				x.depth == matrices.depth &&
+				x.parentMirrorSurface == matrices.parentMirrorSurface &&
+				x.parentsParentMirrorSurface == matrices.parentsParentMirrorSurface &&
+				x.parentsParentsParentMirrorSurface == matrices.parentsParentsParentMirrorSurface &&
+				x.parentsParentsParentsParentMirrorSurface == matrices.parentsParentsParentsParentMirrorSurface);
                     //Debug.Log("how many?" + li.Count);
 
                     if (li.Count > 0)
@@ -1373,12 +1373,14 @@ namespace Fragilem17.MirrorsAndPortals
                         {
                             if (cm != matrices)
                             {
-                                PooledPortalTexture p = _pooledTextures.Find(ptex => ptex.matrices.mirrorSurface == cm.mirrorSurface
-                                    && ptex.matrices.parentMirrorSurface == cm.parentMirrorSurface
-                                    && ptex.matrices.parentsParentMirrorSurface == cm.parentsParentMirrorSurface
-                                    && ptex.matrices.parentsParentsParentMirrorSurface == cm.parentsParentsParentMirrorSurface
-                                    && ptex.matrices.parentsParentsParentsParentMirrorSurface == cm.parentsParentsParentsParentMirrorSurface
-                                    && ptex.matrices.depth == cm.depth && ptex.eye == eye);
+                                PooledPortalTexture p = _pooledTextures.Find(ptex =>
+								ptex.matrices.mirrorSurface == cm.mirrorSurface &&
+								ptex.matrices.parentMirrorSurface == cm.parentMirrorSurface &&
+								ptex.matrices.parentsParentMirrorSurface == cm.parentsParentMirrorSurface &&
+								ptex.matrices.parentsParentsParentMirrorSurface == cm.parentsParentsParentMirrorSurface &&
+								ptex.matrices.parentsParentsParentsParentMirrorSurface == cm.parentsParentsParentsParentMirrorSurface &&
+								ptex.matrices.depth == cm.depth &&
+								ptex.eye == eye);
                                 if (p != null)
                                 {
                                     cm.mirrorSurface.UpdateMaterial(eye, p.texture, this, cm.depth, cm.distance);
