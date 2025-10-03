@@ -3,22 +3,15 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class CustomUniversalRenderPipeline : UniversalRenderPipeline
+public static class CustomUniversalRenderPipeline
 {
-    public CustomUniversalRenderPipeline(UniversalRenderPipelineAsset asset) : base(asset)
+    // ...existing code...
+    public static void RenderSingleCameraWithSample(
+        ScriptableRenderContext context,
+        Camera camera,
+        ref UniversalAdditionalCameraData additionalCameraData,
+        bool isLastBaseCamera = true)
     {
-        // Custom initialization if needed
-    }
-
-    protected override void Render(ScriptableRenderContext context, List<Camera> cameras)
-    {
-        // Custom render logic
-        base.Render(context, cameras);
-    }
-
-    internal static void RenderSingleCameraInternal(ScriptableRenderContext context, Camera camera, ref UniversalAdditionalCameraData additionalCameraData, bool isLastBaseCamera = true)
-    {
-        // Corrected implementation without using non-existent methods
         CommandBuffer cmd = CommandBufferPool.Get();
         try
         {
@@ -26,10 +19,17 @@ public class CustomUniversalRenderPipeline : UniversalRenderPipeline
             context.ExecuteCommandBuffer(cmd);
             cmd.Clear();
 
-            // Call the base implementation
             UniversalRenderPipeline.RenderSingleCameraInternal(context, camera, ref additionalCameraData, isLastBaseCamera);
 
             cmd.EndSample("RenderSingleCamera");
+            context.ExecuteCommandBuffer(cmd);
+        }
+        finally
+        {
+            CommandBufferPool.Release(cmd);
+        }
+    }
+}
             context.ExecuteCommandBuffer(cmd);
         }
         finally

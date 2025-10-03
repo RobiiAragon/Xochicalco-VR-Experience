@@ -140,6 +140,8 @@ namespace Fragilem17.MirrorsAndPortals
 
         public bool ARCompatible = false;
 
+        private bool _loggedMsaaFallback;
+
 #if UNITY_EDITOR_OSX
         [Tooltip("When checked, in Unity for MacOSX, the console will be spammed with a message each time a mirror renders, this is a workarround to a Unity Bug that instantly crashes the editor. (disable at your own peril)")]
         public bool enableMacOSXTemporaryLogsToAvoidCrashingTheEditor = true;
@@ -1177,13 +1179,12 @@ namespace Fragilem17.MirrorsAndPortals
         {
             Vector3 A = rectanglePoints[0];
             Vector3 B = rectanglePoints[1];
-            Vector3 C = rectanglePoints[3];
-            Vector3 D = rectanglePoints[2];
+            Vector3 C = rectanglePoints[2];
+            Vector3 D = rectanglePoints[3];
 
             Vector3 AB = B - A;
             Vector3 AD = D - A;
             Vector3 planeNormal = Vector3.Cross(AB, AD).normalized;
-
 
             Plane plane = new Plane(A, B, C);
             //Debug.DrawRay(A, plane.normal, Color.cyan);
@@ -1299,11 +1300,19 @@ namespace Fragilem17.MirrorsAndPortals
                     GetFreeTexture(out _ptex, eye);
                     _ptex.matrices = matrices;
 
-                    // Ensure the render texture is properly resolved
-                    if (_ptex.texture != null && !_ptex.texture.IsCreated())
+                    //Debug.Log(" depth: " + matrices.depth + " render op: " + matrices.mirrorSurface.name + " VOOR parent: " + matrices.parentMirrorSurface?.name + " using tex: " + _ptex.texture.name + " parentsParent: "+ matrices.parentsParentMirrorSurface);
+
+                    _ptex.liteLock = true;
+
+                    if (matrices.parentMirrorSurface == null)
                     {
-                        _ptex.texture.Create();
+                        _pooledTextures.ForEach(pTex => {
+                            pTex.liteLock = false;
+                        });
+                        _ptex.fullLock = true;
                     }
+
+
 
                     reflectionCamera.targetTexture = _ptex.texture;
                     reflectionCamera.worldToCameraMatrix = matrices.worldToCameraMatrix;
@@ -1346,15 +1355,7 @@ namespace Fragilem17.MirrorsAndPortals
                         _skyboxReflectionCam.material = skyboxMaterial;
                     }
 
-                    try
-                    {
-                        UniversalRenderPipeline.RenderSingleCamera(src, reflectionCamera);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.LogError($"Error rendering portal camera: {ex.Message}");
-                    }
-
+                    UniversalRenderPipeline.RenderSingleCamera(src, reflectionCamera);
                     matrices.mirrorSurface.UpdateMaterial(eye, _ptex.texture, this, matrices.depth, matrices.distance);
 
                     // reset the material to the one with the lowest depth
@@ -1423,21 +1424,42 @@ namespace Fragilem17.MirrorsAndPortals
                 tex.eye = eye;
                 _pooledTextures.Add(tex);
 
-                // create the texture
-                //Debug.Log("creating new pooledTexture: " + _pooledTextures.Count);
-
                 if (useScreenScaleFactor && screenScaleFactor > 0)
                 {
-                    float scale = screenScaleFactor; // * (1f / depth);
+                    float scale = screenScaleFactor;
                     textureSize = new Vector2(Screen.width * scale, Screen.height * scale);
                 }
 
-                //RenderTextureDescriptor desc = new RenderTextureDescriptor((int)textureSize.x, (int)textureSize.y, RenderTextureFormat.ARGB32, 1);
-                RenderTextureDescriptor desc = new RenderTextureDescriptor((int)textureSize.x, (int)textureSize.y, _renderTextureFormat, 1);
-                desc.useMipMap = false;
-                desc.autoGenerateMips = false;
+                int width = Mathf.Max(1, (int)textureSize.x);
+                int height = Mathf.Max(1, (int)textureSize.y);
 
-                desc.msaaSamples = (int)antiAliasing;
+                RenderTextureDescriptor desc = new RenderTextureDescriptor(width, height, _renderTextureFormat, 24)
+                {
+                    useMipMap = false,
+                    autoGenerateMips = false,
+                    msaaSamples = Mathf.Max(1, (int)antiAliasing),
+                    sRGB = QualitySettings.activeColorSpace == ColorSpace.Linear,
+                    dimension = TextureDimension.Tex2D,
+                    vrUsage = XRSettings.enabled ? VRTextureUsage.TwoEyes : VRTextureUsage.None,
+                    bindMS = false
+                };
+
+                if (desc.msaaSamples > 1)
+                {
+                    if (!SystemInfo.supportsMultisampleAutoResolve)
+                    {
+                        desc.msaaSamples = 1;
+                        if (!_loggedMsaaFallback)
+                        {
+                            Debug.LogWarning("PortalRenderer: Falling back to 1× MSAA for portal render textures; automatic resolve isn’t available on this platform.");
+                            _loggedMsaaFallback = true;
+                        }
+                    }
+                    else
+                    {
+                        desc.bindMS = true;
+                    }
+                }
 
                 tex.texture = RenderTexture.GetTemporary(desc);
                 tex.texture.wrapMode = TextureWrapMode.Mirror;

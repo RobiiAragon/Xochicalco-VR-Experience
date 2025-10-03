@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2296421038049033688
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3195894096289210774, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.014910009
+      objectReference: {fileID: 0}
+    - target: {fileID: 3195894096289210774, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.00033004326
+      objectReference: {fileID: 0}
+    - target: {fileID: 3195894096289210774, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -0.00019015651
+      objectReference: {fileID: 0}
+    - target: {fileID: 5012623194324799578, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.05148983
+      objectReference: {fileID: 0}
+    - target: {fileID: 5012623194324799578, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.17282628
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.3091993
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.46926072
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.2839622
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165189, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165191, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_Name
+      value: Hexa4Rig OpenXR_Backpack
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779374165191, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779467507432, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: EnableDebugCalibrationButton
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779467507436, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: SaveCalibrationHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779467507436, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: CalibrateHeightOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483031779723425696, guid: e03037e2b4564104f99d6614055fa270,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.29200003
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e03037e2b4564104f99d6614055fa270, type: 3}
