@@ -331,7 +331,7 @@ namespace HexabodyVR.PlayerController
 
             if (!Inputs.CrouchState.Active && _legStage == LegStage.Standing && IsGrounded && !Inputs.JumpState.Active)
             {
-                if (Sprinting && LocoBall.linearVelocity.sqrMagnitude > 2f)
+                if (Sprinting && LocoBall.velocity.sqrMagnitude > 2f)
                 {
                     SetCrouchLevel(CrouchLevel.Standing);
                 }
@@ -339,7 +339,7 @@ namespace HexabodyVR.PlayerController
                 {
                     SetCrouchLevel(CrouchLevel.SuperSquat);
                 }
-                else if (LocoBall.linearVelocity.sqrMagnitude > 2f && (_crouchLevel == CrouchLevel.ButtOnTheFloor || _crouchLevel == CrouchLevel.SuperSquat || _crouchLevel == CrouchLevel.Squat))
+                else if (LocoBall.velocity.sqrMagnitude > 2f && (_crouchLevel == CrouchLevel.ButtOnTheFloor || _crouchLevel == CrouchLevel.SuperSquat || _crouchLevel == CrouchLevel.Squat))
                 {
                     SetCrouchLevel(CrouchLevel.KneeBent);
                 }
@@ -736,7 +736,7 @@ namespace HexabodyVR.PlayerController
             LocoBall.angularVelocity = Vector3.ClampMagnitude(LocoBall.angularVelocity, targetAngularVelocity);
             if (IsGrounded)
             {
-                LocoBall.linearVelocity = Vector3.ClampMagnitude(LocoBall.linearVelocity, targetSpeed);
+                LocoBall.velocity = Vector3.ClampMagnitude(LocoBall.velocity, targetSpeed);
             }
             
             var adjustedAcceleration = SlopeCurve.Evaluate(groundPercent) *  CrouchAccelerationCurve.Evaluate(_crouchPercent) * (Sprinting ? RunAcceleration : Acceleration);
@@ -779,10 +779,10 @@ namespace HexabodyVR.PlayerController
 
         private void ZeroXZ(Rigidbody rigid)
         {
-            var v = rigid.linearVelocity;
+            var v = rigid.velocity;
             v.x = 0f;
             v.z = 0f;
-            rigid.linearVelocity = v;
+            rigid.velocity = v;
         }
 
 

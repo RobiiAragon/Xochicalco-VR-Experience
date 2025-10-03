@@ -44,7 +44,7 @@ namespace HexabodyVR.PlayerController
         public float CameraMoveThreshold = .001f;
 
         [Tooltip("Material applied to the locoball collider when EnableSlipper is called.")]
-        public PhysicsMaterial SlipperyMaterial;
+        public PhysicMaterial SlipperyMaterial;
 
         [Tooltip("Double click timeout for sprinting,(vive controllers).")]
         public float SprintDoubleClickThreshold = .25f;
@@ -241,7 +241,7 @@ namespace HexabodyVR.PlayerController
         private Vector3 _jumpVelocity;
         private bool _previousShowShapes;
         private float _previousSlopeAngle;
-        private PhysicsMaterial _previousLocoMaterial;
+        private PhysicMaterial _previousLocoMaterial;
         private bool _slippery;
         private ConfigurableJoint _leftArmJoint;
         private ConfigurableJoint _rightArmJoint;
@@ -395,7 +395,7 @@ namespace HexabodyVR.PlayerController
 
             if (!Inputs.CrouchState.Active && _legStage == LegStage.Standing && IsGrounded && !Inputs.JumpState.Active)
             {
-                if (Sprinting && LocoBall.linearVelocity.sqrMagnitude > 2f)
+                if (Sprinting && LocoBall.velocity.sqrMagnitude > 2f)
                 {
                     SetCrouchLevel(CrouchLevel.Standing);
                 }
@@ -403,7 +403,7 @@ namespace HexabodyVR.PlayerController
                 {
                     SetCrouchLevel(CrouchLevel.SuperSquat);
                 }
-                else if (LocoBall.linearVelocity.sqrMagnitude > 2f && (_crouchLevel == CrouchLevel.ButtOnTheFloor || _crouchLevel == CrouchLevel.SuperSquat || _crouchLevel == CrouchLevel.Squat))
+                else if (LocoBall.velocity.sqrMagnitude > 2f && (_crouchLevel == CrouchLevel.ButtOnTheFloor || _crouchLevel == CrouchLevel.SuperSquat || _crouchLevel == CrouchLevel.Squat))
                 {
                     SetCrouchLevel(CrouchLevel.KneeBent);
                 }
@@ -503,8 +503,8 @@ namespace HexabodyVR.PlayerController
 
         private void FixedUpdate()
         {
-            _verticalSpeed = Torso.linearVelocity.y;
-            _actualSpeed = Torso.linearVelocity.magnitude;
+            _verticalSpeed = Torso.velocity.y;
+            _actualSpeed = Torso.velocity.magnitude;
 
             UpdateLegs();
             CheckGrounded();
@@ -768,7 +768,7 @@ namespace HexabodyVR.PlayerController
 
         private IEnumerator JumpRetract()
         {
-            var time = Torso.linearVelocity.y / Mathf.Abs(Physics.gravity.y);
+            var time = Torso.velocity.y / Mathf.Abs(Physics.gravity.y);
 
             _legStage = LegStage.JumpRetract;
 
@@ -952,7 +952,7 @@ namespace HexabodyVR.PlayerController
 
         private void AirAccelerate(Rigidbody rb, Vector3 direction)
         {
-            rb.linearVelocity += direction * AirAcceleration * Time.fixedDeltaTime;
+            rb.velocity += direction * AirAcceleration * Time.fixedDeltaTime;
             //rb.velocity = Vector3.ClampMagnitude(rb.velocity, AirMaxSpeed);
         }
 
@@ -1225,7 +1225,7 @@ namespace HexabodyVR.PlayerController
 
         public void Stop()
         {
-            LocoBall.linearVelocity = HeadRigidbody.linearVelocity = Torso.linearVelocity = Knee.linearVelocity = Vector3.zero;
+            LocoBall.velocity = HeadRigidbody.velocity = Torso.velocity = Knee.velocity = Vector3.zero;
             LocoBall.angularVelocity = Vector3.zero;
         }
 
