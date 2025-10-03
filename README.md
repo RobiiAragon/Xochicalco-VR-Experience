@@ -12,7 +12,7 @@ Un proyecto de realidad virtual desarrollado en Unity, inspirado en el sitio arq
 ## 🛠️ Requisitos del Sistema
 
 ### Software
-- Unity 2022.3 LTS o superior
+- Unity 2021.3 LTS o superior
 - XR Interaction Toolkit 3.2.1+
 - XR Hands 1.6.1+
 - Universal Render Pipeline (URP)
