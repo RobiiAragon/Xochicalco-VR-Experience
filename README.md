@@ -1,6 +1,6 @@
 # Xochicalco VR Project
 
-Un proyecto de realidad virtual desarrollado en Unity, inspirado en el sitio arqueológico de Xochicalco.
+Un proyecto de realidad virtual desarrollado en Unity, inspirado en la universidad Xochicalco.
 
 ## 🎯 Características
 
@@ -151,8 +151,6 @@ Si el problema persiste antes de migrar a RenderGraph:
 - [ ] Implementar audio espacial
 - [ ] Agregar más interacciones con objetos
 - [ ] Optimizar para dispositivos móviles VR
-- [ ] Implementar sistema de logros
-- [ ] Agregar modo multijugador
 
 ## 🤝 Contribución
 
