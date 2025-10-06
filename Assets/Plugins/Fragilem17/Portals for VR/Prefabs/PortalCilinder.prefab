@@ -116,7 +116,7 @@ Transform:
   m_GameObject: {fileID: 2258962670745460356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4289583, y: 1.3770437, z: 1.3770437}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6268991226179125967}
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af7ca4916d35ee4ba154acde45dd813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OtherPortal: {fileID: 0}
+  OtherPortal: {fileID: 1411908468405412782}
   wallCollider: {fileID: 0}
   PortalSurface: {fileID: 6445803409083221945}
   PortalTransporter: {fileID: 1411908466557390515}
@@ -204,7 +204,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0f552034402b14147be6849d585ef404, type: 2}
+  - {fileID: 2100000, guid: f6b56a8ef03219c47ae9da8c7512d251, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -370,7 +370,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  CustomSkybox: {fileID: 0}
   clippingPlaneOffset: -0.002
+  requireObliqueProjectionMatrix: 1
+  nearDistanceToStartDisablingObliquePM: 0.02
   myMeshRenderer: {fileID: 2386929439271538249}
   _currentTexLeft: {fileID: 0}
   _currentTexRight: {fileID: 0}

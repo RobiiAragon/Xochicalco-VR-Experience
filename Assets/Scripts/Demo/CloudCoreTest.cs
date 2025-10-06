@@ -21,6 +21,8 @@ public class CloudCoreTest : MonoBehaviour {
     }
 
     void Update () {
+        if (transform == null) return; // Null-check for Transform
+
         myTransform.RotateAround (transform.parent.position, Vector3.up, Time.deltaTime * rotSpeed);
     }
 }

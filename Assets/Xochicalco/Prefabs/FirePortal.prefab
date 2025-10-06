@@ -95,22 +95,17 @@ PrefabInstance:
     - target: {fileID: 2258962670745460356, guid: 14f626390a3fab64f86cb2b83757ce53,
         type: 3}
       propertyPath: m_Name
-      value: PortalCilinder (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2258962670745460356, guid: 14f626390a3fab64f86cb2b83757ce53,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
+      value: FirePortal
       objectReference: {fileID: 0}
     - target: {fileID: 2386929439271538249, guid: 14f626390a3fab64f86cb2b83757ce53,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: f6b56a8ef03219c47ae9da8c7512d251, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 6445803409083221945, guid: 14f626390a3fab64f86cb2b83757ce53,
         type: 3}
       propertyPath: _currentDistanceBlend
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 14f626390a3fab64f86cb2b83757ce53, type: 3}

@@ -26,7 +26,6 @@ public class CloudBehaviorTest : MonoBehaviour {
             float sqrDstVertical = offset.y * offset.y;
             float tH = 1 - Mathf.Min (1, sqrDstHorizontal / (cloudCentre.falloffDstHorizontal * cloudCentre.falloffDstHorizontal));
             float tV = 1 - Mathf.Min (1, sqrDstVertical / (cloudCentre.falloffVertical * cloudCentre.falloffVertical));
-            //float t = 1 - Mathf.Min (1, sqrDst / (falloffDst * falloffDst));
             maxScale = Mathf.Max (maxScale, tV * tH * cloudCentre.maxScale);
         }
         myTransform.localScale = Vector3.one * maxScale;
