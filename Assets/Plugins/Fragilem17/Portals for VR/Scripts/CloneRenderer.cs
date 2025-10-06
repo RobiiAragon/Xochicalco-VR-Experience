@@ -71,7 +71,15 @@ namespace Fragilem17.MirrorsAndPortals
             if (_clones.Count == 0 || !_cloneHolder)
             {
                 // destroy the holder
-                DestroyImmediate(_cloneHolder);
+                // Use Destroy at runtime to avoid DestroyImmediate during physics/trigger callbacks.
+                if (Application.isPlaying)
+                {
+                    Destroy(_cloneHolder);
+                }
+                else
+                {
+                    DestroyImmediate(_cloneHolder);
+                }
                 _cloneHolder = null;
             }
 
@@ -84,7 +92,15 @@ namespace Fragilem17.MirrorsAndPortals
 
             if (_clone)
             {
-                DestroyImmediate(_clone);
+                // Use Destroy at runtime to avoid DestroyImmediate during physics/trigger callbacks.
+                if (Application.isPlaying)
+                {
+                    Destroy(_clone);
+                }
+                else
+                {
+                    DestroyImmediate(_clone);
+                }
                 _clone = null;
             }
 
