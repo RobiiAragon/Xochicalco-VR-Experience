@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using HurricaneVR.Framework.Components;
+using HurricaneVR.Framework.Core;              // <--- ADICIONADO
+using HurricaneVR.Framework.Core.Grabbers;    // <--- ADICIONADO
 using HurricaneVR.Framework.Core.Stabbing; // <-- usado solo si el framework está presente
 
 // No es necesario el 'RequireComponent' ya que puede ser MeshFilter o SkinnedMeshRenderer

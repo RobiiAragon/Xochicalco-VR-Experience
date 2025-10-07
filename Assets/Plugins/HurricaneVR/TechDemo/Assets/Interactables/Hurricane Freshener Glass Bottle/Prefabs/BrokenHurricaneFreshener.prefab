@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4328930221803075789}
   - component: {fileID: 4898009637230702862}
   - component: {fileID: 6183373242406431298}
+  - component: {fileID: 7257060837300620402}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.002
   m_TagString: Untagged
@@ -30,6 +31,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: 0.00025844574, y: 0.16414797, z: -0.005768776}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 2
@@ -53,6 +55,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -113,6 +116,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7257060837300620402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86043005173494628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &1655055278954518244
 GameObject:
   m_ObjectHideFlags: 0
@@ -126,6 +161,7 @@ GameObject:
   - component: {fileID: 7578199663218180183}
   - component: {fileID: 4437055276590953661}
   - component: {fileID: 6138030591502293570}
+  - component: {fileID: 7357334900021501329}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.001
   m_TagString: Untagged
@@ -143,6 +179,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: 0.0030550957, y: 0.27039838, z: 0.007511139}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 1
@@ -166,6 +203,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -226,6 +264,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7357334900021501329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655055278954518244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &2595701015259605359
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,6 +309,7 @@ GameObject:
   - component: {fileID: 2018544984057107018}
   - component: {fileID: 7854147994662658839}
   - component: {fileID: 5254736449104992880}
+  - component: {fileID: 2234993064121748286}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell
   m_TagString: Untagged
@@ -256,6 +327,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.0075240135, y: 0.23967564, z: -0.00095176697}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 0
@@ -279,6 +351,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -339,6 +412,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2234993064121748286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2595701015259605359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &3467117033914892372
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,6 +457,7 @@ GameObject:
   - component: {fileID: 5418363847434944653}
   - component: {fileID: 5001411494498291567}
   - component: {fileID: 8134244590381000314}
+  - component: {fileID: 2893194011330783537}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.005
   m_TagString: Untagged
@@ -369,6 +475,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.0019259453, y: 0.11724734, z: 0.008814812}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 5
@@ -392,6 +499,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -452,6 +560,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2893194011330783537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3467117033914892372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &3479410278599808511
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,6 +605,7 @@ GameObject:
   - component: {fileID: 5206047830333910587}
   - component: {fileID: 5961871446854452781}
   - component: {fileID: 1545462782717302323}
+  - component: {fileID: 1829863421867357204}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.004
   m_TagString: Untagged
@@ -482,6 +623,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: 0.0038790703, y: 0.22144616, z: 0.00061798096}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 4
@@ -505,6 +647,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -565,6 +708,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1829863421867357204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3479410278599808511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &3880124619768169222
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,6 +753,7 @@ GameObject:
   - component: {fileID: 7392660061003946261}
   - component: {fileID: 2883404452294214282}
   - component: {fileID: 731200833158081520}
+  - component: {fileID: 668056971065236285}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.008
   m_TagString: Untagged
@@ -595,6 +771,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.003062725, y: 0.26825202, z: -0.009332657}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 8
@@ -618,6 +795,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -678,6 +856,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &668056971065236285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3880124619768169222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &5340194638104785530
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,6 +914,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.0506043, y: 0.981753, z: 8.157926}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3009507693604849170}
   - {fileID: 6682122994018907881}
@@ -731,6 +942,7 @@ GameObject:
   - component: {fileID: 682792214208569833}
   - component: {fileID: 2021599599380551110}
   - component: {fileID: 757717466729917849}
+  - component: {fileID: 7001485097307524988}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.006
   m_TagString: Untagged
@@ -748,6 +960,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.014850616, y: 0.03776586, z: 0.010781288}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 6
@@ -771,6 +984,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -831,6 +1045,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7001485097307524988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6065736773795364650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &6205269206022371644
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,6 +1090,7 @@ GameObject:
   - component: {fileID: 8279580839419782470}
   - component: {fileID: 2893363064273964924}
   - component: {fileID: 3688796925482587199}
+  - component: {fileID: 7778640321634501596}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.009
   m_TagString: Untagged
@@ -861,6 +1108,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: 0.018125057, y: 0.03680694, z: -0.004573822}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 9
@@ -884,6 +1132,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -944,6 +1193,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7778640321634501596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6205269206022371644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &6703318530824269867
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,6 +1238,7 @@ GameObject:
   - component: {fileID: 4332509231934375022}
   - component: {fileID: 1240793122266272065}
   - component: {fileID: 6474811864585715410}
+  - component: {fileID: 2345023063381304844}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.007
   m_TagString: Untagged
@@ -974,6 +1256,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.02252531, y: 0.00913012, z: -0.006398201}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 7
@@ -997,6 +1280,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1057,6 +1341,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2345023063381304844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6703318530824269867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
 --- !u!1 &7821311185474271657
 GameObject:
   m_ObjectHideFlags: 0
@@ -1070,6 +1386,7 @@ GameObject:
   - component: {fileID: 2861245566134979366}
   - component: {fileID: 8212308709087571827}
   - component: {fileID: 3814377330980099932}
+  - component: {fileID: 8832585921843371471}
   m_Layer: 0
   m_Name: BeerBottle_low_poly_cell.003
   m_TagString: Untagged
@@ -1087,6 +1404,7 @@ Transform:
   m_LocalRotation: {x: 0.09229369, y: -0.70105773, z: -0.7010577, w: -0.09229378}
   m_LocalPosition: {x: -0.015902042, y: 0.03361869, z: -0.021931648}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4708511307108591808}
   m_RootOrder: 3
@@ -1110,6 +1428,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1170,3 +1489,35 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8832585921843371471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7821311185474271657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0acc8634f851ccc4b9c3dffcba695a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformToPortal: {fileID: 0}
+  PortallingEnabled: 1
+  OnEnterPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPrePortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostPortalEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExitPortalCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  IsMasterPortalableObject: 0
+  PortalAlongWithMasterPortalable: 0
+  RigidbodiesToPortal: []
+  childCloneRenderers: []
+  ClonePositionToClosestPortal: {fileID: 0}
+  Grabbable: {fileID: 0}
