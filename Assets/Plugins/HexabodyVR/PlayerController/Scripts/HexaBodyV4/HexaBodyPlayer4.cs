@@ -12,7 +12,7 @@ namespace HexabodyVR.PlayerController
     {
         public const string HeightKey = "SaveHeight";
 
-        private const float MaxFallSpeed = 25.0f; // Velocidad máxima permitida
+        private const float MaxFallSpeed = 5.0f; // Velocidad máxima permitida
 
         [Header("Jumping")]
         public float JumpDamper = 3000f;
@@ -571,6 +571,24 @@ namespace HexabodyVR.PlayerController
             ClampVelocity(Knee);
             ClampVelocity(Head);
 
+            // Guardar la última posición válida en el suelo
+            if (IsGrounded)
+            {
+                _lastGroundedPosition = Pelvis.position;
+                _timeInAir = 0f;
+            }
+            else
+            {
+                _timeInAir += Time.fixedDeltaTime;
+            }
+
+            // Reiniciar posición si el jugador está fuera del mapa
+            // Remove the condition for resetting based on time in air and Y position
+            // if (!IsGrounded && _timeInAir > 4f && Pelvis.position.y < -1.5f)
+            // {
+            //     ResetToLastGroundedPosition();
+            // }
+
             ActualWaistHeight = Pelvis.transform.localPosition.y - LocoBall.transform.localPosition.y;
             WaistToBallHeight = PlayerWaistHeight - _originalLocoRadius;
             ActualCrouchAmount = WaistToBallHeight - ActualWaistHeight;
@@ -586,6 +604,22 @@ namespace HexabodyVR.PlayerController
             UpdateLegHeight();
             UpdateShoulderAnchors();
             WasGrounded = IsGrounded;
+        }
+
+        // Método para reiniciar la posición y velocidad del jugador
+        private void ResetToLastGroundedPosition()
+        {
+            var adjustedPosition = _lastGroundedPosition + Vector3.up * 3; // Sumar 3 al eje Y
+
+            Pelvis.position = adjustedPosition;
+            LocoBall.position = adjustedPosition;
+            Knee.position = adjustedPosition;
+            Head.position = adjustedPosition;
+
+            Pelvis.velocity = Vector3.zero;
+            LocoBall.velocity = Vector3.zero;
+            Knee.velocity = Vector3.zero;
+            Head.velocity = Vector3.zero;
         }
 
         // Método para limitar la velocidad de un Rigidbody
@@ -1864,6 +1898,19 @@ namespace HexabodyVR.PlayerController
         {
             get => goalVelocity;
             set => goalVelocity = value;
+        }
+
+        private Vector3 _lastGroundedPosition; // Última posición válida en el suelo
+        private float _timeInAir; // Tiempo acumulado en el aire
+
+        private void OnTriggerEnter(Collider other)
+        {
+            // Ensure the "ResetZone" object has a Tag named "ResetZone" in the Inspector.
+            if (other.CompareTag("ResetZone"))
+            {
+                Debug.Log("Jugador ha entrado en la ResetZone. ¡Reiniciando posición!");
+                ResetToLastGroundedPosition();
+            }
         }
     }
 }

@@ -57,6 +57,12 @@ namespace Fragilem17.MirrorsAndPortals
 
 		protected override void OnMasterPortalEnterPortalCollider(Portal portal)
 		{
+			if (portal == null)
+			{
+				Debug.LogError("Portal is null in OnMasterPortalEnterPortalCollider.");
+				return;
+			}
+
 			if (Grabbable.IsHandGrabbed)
 			{
 				SetIsInPortal(portal);
