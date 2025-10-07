@@ -268,11 +268,17 @@ namespace Fragilem17.MirrorsAndPortals
             if (XRSettings.enabled)
             {
                 _isMultipass = XRSettings.stereoRenderingMode == XRSettings.StereoRenderingMode.MultiPass;
-                if (_isMultipass && _reflectionCameras.Count > 0)
+                if (_isMultipass && _reflectionCameras.Count > 0 && Portals != null)
                 {
-                    foreach (Portal portal in Portals)
+                    // defensive: Portals may contain null entries or PortalSurface may be null; Camera.main may be null (headless contexts)
+                    var cam = Camera.main;
+                    if (cam != null)
                     {
-                        portal.PortalSurface.UpdatePositionsInMaterial(Camera.main.transform.position, Camera.main.transform.right);
+                        foreach (Portal portal in Portals)
+                        {
+                            if (portal == null || portal.PortalSurface == null) continue;
+                            portal.PortalSurface.UpdatePositionsInMaterial(cam.transform.position, cam.transform.right);
+                        }
                     }
                 }
             }
@@ -1451,11 +1457,17 @@ namespace Fragilem17.MirrorsAndPortals
 
         private void Update()
         {
+            // If no list at all -> nothing to do
             if (Portals == null)
             {
                 return;
             }
-            foreach (Portal p in Portals) {
+
+            // Be defensive: Portals may contain null entries (e.g. removed in editor), avoid NRE
+            for (int i = 0; i < Portals.Count; i++)
+            {
+                var p = Portals[i];
+                if (p == null) continue;
                 p.MyRenderer = this;
             }
 
@@ -1471,18 +1483,23 @@ namespace Fragilem17.MirrorsAndPortals
                 _oldScreenScaleFactor = screenScaleFactor;
                 _oldTextureSize = ((int)textureSize.x + (int)textureSize.y);
 
-                foreach (PooledPortalTexture tex in _pooledTextures)
+                // defensive: _pooledTextures should be non-null but guard texture references
+                if (_pooledTextures != null)
                 {
-                    DestroyImmediate(((RenderTexture)tex.texture));
+                    foreach (PooledPortalTexture tex in _pooledTextures)
+                    {
+                        if (tex != null && tex.texture != null)
+                        {
+                            DestroyImmediate(((RenderTexture)tex.texture));
+                        }
+                    }
+                    _pooledTextures.Clear();
                 }
-                _pooledTextures.Clear();
-
             }
 
             if (recursions > 8)
             {
                 recursions = 8;
-
             }
         }
         private void GetUACData(Camera cam, out UniversalAdditionalCameraData uac)
@@ -1575,7 +1592,10 @@ namespace Fragilem17.MirrorsAndPortals
         void OnDisable()
         {
             //Debug.Log("OnDisable");
-            portalRendererInstances.Remove(this);
+            if (portalRendererInstances != null)
+            {
+                portalRendererInstances.Remove(this);
+            }
             RenderPipeline.beginCameraRendering -= UpdateCamera;
 
             if (_master == this)
@@ -1652,9 +1672,13 @@ namespace Fragilem17.MirrorsAndPortals
             Portal closestPortal = null;
             float minDistance = float.MaxValue;
 
+            if (portalRendererInstances == null) return null;
+
             for (int i = 0; i < portalRendererInstances.Count; i++)
             {
                 PortalRenderer pr = portalRendererInstances[i];
+                if (pr == null || pr.Portals == null) continue;
+
                 for (int j = 0; j < pr.Portals.Count; j++)
                 {
                     Portal _p = pr.Portals[j];

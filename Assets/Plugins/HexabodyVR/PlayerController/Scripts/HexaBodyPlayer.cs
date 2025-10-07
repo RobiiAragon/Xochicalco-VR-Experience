@@ -7,6 +7,8 @@ namespace HexabodyVR.PlayerController
     [RequireComponent(typeof(HexaBodyPlayerInputs))]
     public class HexaBodyPlayer : MonoBehaviour
     {
+        private const float MaxFallSpeed = 25.0f; // Velocidad máxima permitida
+
         [Header("Locomotion")]
 
         [Tooltip("Acceleration of the locosphere")]
@@ -437,24 +439,11 @@ namespace HexabodyVR.PlayerController
             Bumper.position = LocoBall.position + new Vector3(0, BumperOffset, 0f);
             JointLegBall.anchor = Vector3.up * -(LegHeight);
 
-            if (Math.Abs(Inputs.TurnAxis.x) > SmoothTurnThreshold)
-            {
-                Torso.AddTorque(Vector3.up * (SmoothTurnSpeed * Inputs.TurnAxis.x * Mathf.Deg2Rad), ForceMode.VelocityChange);
-            }
-
-            if (IsGrounded)
-            {
-                JointLegBall.targetVelocity = (JointLegBall.anchor - _previousAnchor) / Time.fixedDeltaTime;
-            }
-            else
-            {
-                JointLegBall.targetVelocity = Vector3.zero;
-            }
-            
-            _previousAnchor = JointLegBall.anchor;
-
-            LegsCapsule.height = Vector3.Distance(Torso.position, LocoBall.position);
-            LegsCapsule.center = new Vector3(0, -LegsCapsule.height / 2f, 0f);
+            // Limitar la velocidad máxima del rig
+            ClampVelocity(LocoBall);
+            ClampVelocity(Torso);
+            ClampVelocity(Knee);
+            ClampVelocity(HeadRigidbody);
 
             CheckGrounded();
             Jump();
@@ -481,6 +470,15 @@ namespace HexabodyVR.PlayerController
             }
 
             JointLegBall.yDrive = drive;
+        }
+
+        // Método para limitar la velocidad de un Rigidbody
+        private void ClampVelocity(Rigidbody rb)
+        {
+            if (rb.velocity.magnitude > MaxFallSpeed)
+            {
+                rb.velocity = rb.velocity.normalized * MaxFallSpeed;
+            }
         }
 
         private void Jump()

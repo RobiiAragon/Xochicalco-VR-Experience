@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HurricaneVR.Framework.Shared;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using HurricaneVR.Framework.Shared; // <-- added to resolve HVRAxis type
 
 namespace HurricaneVR.Framework.Core.Utils
 {
@@ -83,7 +83,7 @@ namespace HurricaneVR.Framework.Core.Utils
 
             foreach (Transform child in transform)
             {
-                foreach (var c in GetColliders(rigidbody, child))
+                foreach (var c in GetColliders(rigidbody, child, includeTriggers))
                 {
                     yield return c;
                 }
@@ -357,12 +357,15 @@ namespace HurricaneVR.Framework.Core.Utils
         /// </summary>
         public static void GetRelativesTo(this Component target, Transform relativeTo, out Vector3 pos, out Quaternion rot)
         {
-            pos = Vector3.zero;
-            rot = Quaternion.identity;
-            if (!relativeTo || !target) return;
+            if (!relativeTo || !target)
+            {
+                pos = Vector3.zero;
+                rot = Quaternion.identity;
+                return;
+            }
 
-            pos = relativeTo.transform.InverseTransformPoint(target.transform.position);
-            rot = Quaternion.Inverse(relativeTo.transform.rotation) * target.transform.rotation;
+            pos = relativeTo.InverseTransformPoint(target.transform.position);
+            rot = Quaternion.Inverse(relativeTo.rotation) * target.transform.rotation;
         }
 
         /// <summary>

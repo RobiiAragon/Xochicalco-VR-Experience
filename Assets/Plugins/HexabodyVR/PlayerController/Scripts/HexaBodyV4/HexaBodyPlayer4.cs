@@ -12,6 +12,8 @@ namespace HexabodyVR.PlayerController
     {
         public const string HeightKey = "SaveHeight";
 
+        private const float MaxFallSpeed = 25.0f; // Velocidad máxima permitida
+
         [Header("Jumping")]
         public float JumpDamper = 3000f;
 
@@ -563,6 +565,12 @@ namespace HexabodyVR.PlayerController
             flat.y = 0f;
             _actualSpeed = flat.magnitude;
 
+            // Limitar la velocidad máxima del rig
+            ClampVelocity(LocoBall);
+            ClampVelocity(Pelvis);
+            ClampVelocity(Knee);
+            ClampVelocity(Head);
+
             ActualWaistHeight = Pelvis.transform.localPosition.y - LocoBall.transform.localPosition.y;
             WaistToBallHeight = PlayerWaistHeight - _originalLocoRadius;
             ActualCrouchAmount = WaistToBallHeight - ActualWaistHeight;
@@ -571,7 +579,6 @@ namespace HexabodyVR.PlayerController
 
             CheckGrounded();
             StartJumping();
-            //CheckMassUpdate();
             Move();
             Turn();
             UpdateBody();
@@ -579,6 +586,15 @@ namespace HexabodyVR.PlayerController
             UpdateLegHeight();
             UpdateShoulderAnchors();
             WasGrounded = IsGrounded;
+        }
+
+        // Método para limitar la velocidad de un Rigidbody
+        private void ClampVelocity(Rigidbody rb)
+        {
+            if (rb.velocity.magnitude > MaxFallSpeed)
+            {
+                rb.velocity = rb.velocity.normalized * MaxFallSpeed;
+            }
         }
 
         private void CalcJumpHeight()

@@ -91,11 +91,9 @@ Sistema automático que verifica:
 - Importación de samples necesarios
 
 ## 🎮 Uso
-
-1. **Configurar dispositivo VR**
-2. **Abrir escena principal**
-3. **Presionar Play** en el editor
-4. **Usar controles VR** para interactuar
+- Abra la escena principal en Assets/Scenes.
+- Asegúrese de tener los paquetes recomendados instalados (Input System, XR Management, etc.).
+- Consulte OPTIMIZATION_GUIDE.md para consejos de render/performace.
 
 ## 🐛 Troubleshooting
 

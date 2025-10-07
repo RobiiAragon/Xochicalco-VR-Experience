@@ -8,6 +8,8 @@ namespace HexabodyVR.PlayerController
     [RequireComponent(typeof(HexaBodyPlayerInputs))]
     public class HexaBodyPlayer3 : MonoBehaviour
     {
+        private const float MaxFallSpeed = 25.0f; // Velocidad máxima permitida
+
         [Header("Locomotion")]
 
         [Tooltip("Air Acceleration")]
@@ -506,6 +508,12 @@ namespace HexabodyVR.PlayerController
             _verticalSpeed = Torso.velocity.y;
             _actualSpeed = Torso.velocity.magnitude;
 
+            // Limitar la velocidad máxima del rig
+            ClampVelocity(LocoBall);
+            ClampVelocity(Torso);
+            ClampVelocity(Knee);
+            ClampVelocity(HeadRigidbody);
+
             UpdateLegs();
             CheckGrounded();
             Jump();
@@ -514,6 +522,15 @@ namespace HexabodyVR.PlayerController
             UpdateHead();
             UpdateBody();
             UpdateShoulderAnchors();
+        }
+
+        // Método para limitar la velocidad de un Rigidbody
+        private void ClampVelocity(Rigidbody rb)
+        {
+            if (rb.velocity.magnitude > MaxFallSpeed)
+            {
+                rb.velocity = rb.velocity.normalized * MaxFallSpeed;
+            }
         }
 
         private void UpdateShoulderAnchors()

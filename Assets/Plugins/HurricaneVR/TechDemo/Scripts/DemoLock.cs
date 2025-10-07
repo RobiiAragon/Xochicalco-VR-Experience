@@ -46,7 +46,16 @@ namespace HurricaneVR.TechDemo.Scripts
     
         private void OnKeyGrabbed(HVRGrabberBase grabber, HVRGrabbable key)
         {
-            StartCoroutine(MoveKey(key));
+            // Basic behaviour: attach the grabbed key into the socket area and play an insert SFX.
+            if (key == null) return;
+
+            // Parent/position the key into the socket for visual placement
+            key.transform.parent = Socket.transform;
+            key.transform.localPosition = Vector3.zero;
+            key.transform.localRotation = Quaternion.identity;
+
+            // Play insertion sound if present
+            if (SFXPlayer.Instance && SFXKeyInserted) SFXPlayer.Instance.PlaySFX(SFXKeyInserted, key.transform.position);
         }
 
         private IEnumerator MoveKey(HVRGrabbable key)

@@ -341,7 +341,7 @@ public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer
         builder.ReadTexture(colorHandle);
         builder.SetRenderFunc((PassData data, RenderGraphContext ctx) =>
         {
-            Blitter.BlitTexture(ctx.cmd, data.src, new Vector4(1,1,0,0), 0, false);
+            Blitter.BlitTexture(ctx.cmd, data.src, new UnityEngine.Vector4(1,1,0,0), 0, false);
         });
     }
 }
@@ -350,8 +350,8 @@ public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer
 Problemas comunes:
 - Artefactos negros: descriptor incorrecto (formato o depthBufferBits ≠ 0 si no necesitas depth).
 - Doble clear: remover ConfigureClear antiguo; confiar en cámara principal o agregar pass de clear explícito RG.
-- “Out of range RT”: faltó builder.ReadTexture/WriteTexture.
 
 ---
 
+**Recuerda**: Optimizar es un proceso iterativo. Siempre mide antes y después de cada cambio.
 **Recuerda**: Optimizar es un proceso iterativo. Siempre mide antes y después de cada cambio.

@@ -104,6 +104,9 @@ namespace HexabodyVR.PlayerController
             RigidBody.solverIterations = SolverIterations;
             RigidBody.solverVelocityIterations = SolverVelocityIterations;
 
+            // reduce tunnelling on fast hand movement
+            if (RigidBody) RigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
             if (!HexaBody)
             {
                 HexaBody = transform.root.GetComponentInChildren<HexaBodyPlayer4>();
