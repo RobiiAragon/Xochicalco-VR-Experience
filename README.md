@@ -99,4 +99,8 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 
 ---
 
+<<<<<<< HEAD
 *Desarrollado con ❤️ para preservar y compartir el patrimonio cultural mexicano.*
+=======
+*Desarrollado con ❤️ para preservar y compartir el patrimonio cultural mexicano.*
+>>>>>>> dcc50c4a2c0f521cd30676e6fc8d56170abbaec3
