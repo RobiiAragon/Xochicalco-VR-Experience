@@ -24,7 +24,7 @@ Un proyecto de realidad virtual desarrollado en Unity, inspirado en la universid
 
 1. **Clonar el repositorio**
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/RobiiAragon/Xochicalco-VR-Experience.git
    cd Xochicalco
    ```
 
