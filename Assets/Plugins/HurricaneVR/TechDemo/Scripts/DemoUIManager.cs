@@ -66,8 +66,25 @@ namespace HurricaneVR.TechDemo.Scripts
             if(LeftHand) leftparent = LeftHand.transform.parent;
             if(RightHand)rightParent = RightHand.transform.parent;
 
-            UpdateSitStandButton();
-            UpdateForceGrabButton();
+            // Validar referencias antes de usarlas
+            if (SitStandText != null)
+            {
+                UpdateSitStandButton();
+            }
+            else
+            {
+                Debug.LogError("SitStandText no está asignado en el inspector.");
+            }
+
+            if (ForceGrabText != null)
+            {
+                UpdateForceGrabButton();
+            }
+            else
+            {
+                Debug.LogError("ForceGrabText no está asignado en el inspector.");
+            }
+
             TurnRateSlider.value = Player.SmoothTurnSpeed;
             SnapTurnSlider.value = Player.SnapAmount;
 
@@ -133,7 +150,15 @@ namespace HurricaneVR.TechDemo.Scripts
 
         private void UpdateSitStandButton()
         {
-            SitStandText.text = CameraRig.SitStanding.ToString();
+            // Validar referencias antes de usarlas
+            if (SitStandText != null && CameraRig != null)
+            {
+                SitStandText.text = CameraRig.SitStanding.ToString();
+            }
+            else
+            {
+                Debug.LogError("SitStandText o CameraRig no están asignados.");
+            }
         }
 
         public void OnTurnRateChanged(float rate)

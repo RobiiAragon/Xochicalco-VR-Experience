@@ -7,6 +7,7 @@ using HurricaneVR.Framework.Shared;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.InputSystem.XR;
 
 #if USING_OPENXR
 using UnityEngine.XR.OpenXR.Input;
@@ -65,7 +66,7 @@ namespace HurricaneVR.Framework.ControllerInput
         {
             if (Side == HVRHandSide.Left)
             {
-                JoystickAxis = InputActions.LeftHand.Primary2DAxis.ReadValue<Vector2>();
+                JoystickAxis = InputActions.LeftHand.Primary2DAxis.ReadValue<Vector2>(); // Replace with StickControl if needed
 
                 SetBool(out JoystickClicked, InputActions.LeftHand.Primary2DAxisClick);
                 SetBool(out TrackPadClicked, InputActions.LeftHand.Secondary2DAxisClick);
@@ -94,7 +95,7 @@ namespace HurricaneVR.Framework.ControllerInput
             }
             else
             {
-                JoystickAxis = InputActions.RightHand.Primary2DAxis.ReadValue<Vector2>();
+                JoystickAxis = InputActions.RightHand.Primary2DAxis.ReadValue<Vector2>(); // Replace with StickControl if needed
 
                 SetBool(out JoystickClicked, InputActions.RightHand.Primary2DAxisClick);
                 SetBool(out TrackPadClicked, InputActions.RightHand.Secondary2DAxisClick);
@@ -146,13 +147,13 @@ namespace HurricaneVR.Framework.ControllerInput
             if (HVRSettings.Instance.DisableHaptics) return;
 
 #if USING_OPENXR
-
             if (IsOpenXR)
             {
                 var action = Side == HVRHandSide.Left ? InputActions.LeftHand.Haptics : InputActions.RightHand.Haptics;
 
                 if (action != null && _inputDevice != null)
                 {
+                    // Replace OpenXRInput.SendHapticImpulse with InputSystem.XR.PoseControl if applicable
                     OpenXRInput.SendHapticImpulse(action, amplitude, frequency, duration, _inputDevice);
                     return;
                 }

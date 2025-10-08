@@ -480,6 +480,9 @@ namespace HurricaneVR.Framework.Shared
                 Device.SendHapticImpulse(0, amplitude, duration);
             }
         }
+
+        public Vector3 ControllerPosition => Device.TryGetFeatureValue(CommonUsages.devicePosition, out var pos) ? pos : Vector3.zero;
+        public Quaternion ControllerRotation => Device.TryGetFeatureValue(CommonUsages.deviceRotation, out var rot) ? rot : Quaternion.identity;
     }
 
     public enum InputSDK
