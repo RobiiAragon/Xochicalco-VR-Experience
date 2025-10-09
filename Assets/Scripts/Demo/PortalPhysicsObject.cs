@@ -6,12 +6,12 @@ using UnityEngine;
 public class PortalPhysicsObject : PortalTraveller {
 
     public float force = 10;
-    new Rigidbody rigidbody;
+    Rigidbody rb; // Renombrado para evitar conflictos
     public Color[] colors;
     static int i;
 
     void Awake () {
-        rigidbody = GetComponent<Rigidbody> ();
+        rb = GetComponent<Rigidbody> ();
         graphicsObject.GetComponent<MeshRenderer> ().material.color = colors[i];
         i++;
         if (i > colors.Length - 1) {
@@ -21,7 +21,7 @@ public class PortalPhysicsObject : PortalTraveller {
 
     public override void Teleport (Transform fromPortal, Transform toPortal, Vector3 pos, Quaternion rot) {
         base.Teleport (fromPortal, toPortal, pos, rot);
-        rigidbody.velocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rigidbody.velocity));
-        rigidbody.angularVelocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rigidbody.angularVelocity));
+        rb.velocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rb.velocity));
+        rb.angularVelocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rb.angularVelocity));
     }
 }
