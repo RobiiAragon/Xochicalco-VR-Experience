@@ -173,14 +173,17 @@ public class PortalsHexaTeleporter : MonoBehaviour
     {
         if (portal.wallCollider)
         {
-            // if that's the case.. then we can turn of the colliders
-            // disable collisions with other portal
+            Debug.Log("OnExitPortal: Intentando reactivar colisiones con la pared del portal.");
+
+            // Reactivar colisiones para el cuerpo principal
             Collider[] colliders = Hexa.GetComponentsInChildren<Collider>(true);
             for (int i = 0; i < colliders.Length; i++)
             {
                 Physics.IgnoreCollision(colliders[i], portal.wallCollider, false);
+                Debug.Log($"Colisión reactivada entre {colliders[i].name} y {portal.wallCollider.name}");
             }
 
+            // Reactivar colisiones para las manos
             for (int i = 0; i < Hands.Count; i++)
             {
                 HVRHandGrabber hand = Hands[i];
@@ -188,8 +191,46 @@ public class PortalsHexaTeleporter : MonoBehaviour
                 for (int j = 0; j < handColliders.Length; j++)
                 {
                     Physics.IgnoreCollision(handColliders[j], portal.wallCollider, false);
+                    Debug.Log($"Colisión reactivada entre {handColliders[j].name} y {portal.wallCollider.name}");
                 }
             }
+
+            // Verificar si algún collider sigue en contacto con la pared
+            foreach (Collider collider in colliders)
+            {
+                if (Physics.ComputePenetration(
+                    collider, collider.transform.position, collider.transform.rotation,
+                    portal.wallCollider, portal.wallCollider.transform.position, portal.wallCollider.transform.rotation,
+                    out Vector3 direction, out float distance))
+                {
+                    // Ajustar la posición para evitar conflictos
+                    collider.transform.position += direction * (distance + 0.1f); // Mover un poco más lejos para evitar contacto
+                    Debug.Log($"Ajustando posición de {collider.name} para evitar penetración con {portal.wallCollider.name}");
+                }
+            }
+
+            // Asegurarse de que el jugador esté completamente fuera de la pared
+            StartCoroutine(EnsurePlayerOutsideWall(portal.wallCollider));
         }
+    }
+
+    private System.Collections.IEnumerator EnsurePlayerOutsideWall(Collider wallCollider)
+    {
+        yield return new WaitForFixedUpdate(); // Esperar un frame de física para evitar conflictos
+
+        Collider[] colliders = Hexa.GetComponentsInChildren<Collider>(true);
+        foreach (Collider collider in colliders)
+        {
+            if (Physics.ComputePenetration(
+                collider, collider.transform.position, collider.transform.rotation,
+                wallCollider, wallCollider.transform.position, wallCollider.transform.rotation,
+                out Vector3 direction, out float distance))
+            {
+                // Mover el jugador completamente fuera de la pared
+                collider.transform.position += direction * (distance + 0.1f);
+            }
+        }
+
+        Debug.Log("Jugador ajustado fuera de la pared.");
     }
 }

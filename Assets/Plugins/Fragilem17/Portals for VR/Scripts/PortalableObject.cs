@@ -264,7 +264,7 @@ namespace Fragilem17.MirrorsAndPortals
             {
                 for (int i = 0; i < _colliders.Length; i++)
                 {
-                    Physics.IgnoreCollision(_colliders[i], portal.wallCollider, false);
+                    Physics.IgnoreCollision(_colliders[i], portal.wallCollider, false); // Reactiva el collider de la pared
                 }
             }
         }
