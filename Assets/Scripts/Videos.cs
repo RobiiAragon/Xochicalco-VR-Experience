@@ -3,125 +3,173 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
+// Asegura que los componentes necesarios existan en el GameObject para evitar errores.
+[RequireComponent(typeof(VideoPlayer))]
+[RequireComponent(typeof(Collider))]
 public class Videos : MonoBehaviour
 {
-    public VideoPlayer video;
-    public List<Light> lights; // Lista de luces en la escena
-    public float fadeDuration = 1.0f; // Duración del cambio gradual de intensidad
-    public Light specialLight; // Foco que inicia apagado
-    private float[] initialIntensities; // Intensidades iniciales de las luces
-    private float specialLightInitialIntensity; // Intensidad inicial del foco especial
-    private bool hasPlayed = false; // Bandera para evitar que el video se reproduzca más de una vez
+    // Usamos [SerializeField] en lugar de 'public' para exponer variables al Inspector.
+    // Es una mejor práctica que mantiene el código más encapsulado y seguro.
+    [Header("Configuración de Video y Luces")]
+    [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private List<Light> sceneLights;
+    [SerializeField] private Light specialLight;
 
-    // Se ejecuta al iniciar el script
-    void Start()
+    [Header("Configuración de la Transición")]
+    [Tooltip("Duración en segundos del apagado y encendido de luces.")]
+    [SerializeField] private float fadeDuration = 1.0f;
+
+    // Variables privadas para el estado interno del script.
+    private float[] _initialSceneIntensities;
+    private float _specialLightInitialIntensity;
+    private bool _hasPlayed = false;
+    private Coroutine _fadeCoroutine;
+
+    // Cacheamos esta instrucción para no generar basura en el bucle de la corrutina.
+    // Es una micro-optimización importante en plataformas móviles como Quest.
+    private readonly WaitForEndOfFrame _waitForEndOfFrame = new WaitForEndOfFrame();
+
+    // Awake se llama antes que Start. Es ideal para inicializar referencias.
+    private void Awake()
     {
-        // Obtiene el componente VideoPlayer de este objeto
-        video = GetComponent<VideoPlayer>();
-        // Detiene el video al iniciar
-        video.Stop();
+        // Obtenemos la referencia al VideoPlayer una sola vez.
+        videoPlayer = GetComponent<VideoPlayer>();
+        videoPlayer.Stop(); // Aseguramos que el video no se autoinicie.
 
-        // Guardar las intensidades iniciales de las luces
-        initialIntensities = new float[lights.Count];
-        for (int i = 0; i < lights.Count; i++)
+        // Guardamos las intensidades iniciales para poder restaurarlas después.
+        if (sceneLights != null)
         {
-            initialIntensities[i] = lights[i].intensity;
+            _initialSceneIntensities = new float[sceneLights.Count];
+            for (int i = 0; i < sceneLights.Count; i++)
+            {
+                if (sceneLights[i] != null)
+                {
+                    _initialSceneIntensities[i] = sceneLights[i].intensity;
+                }
+            }
         }
-
-        // Guardar la intensidad inicial del foco especial
+        
         if (specialLight != null)
         {
-            specialLightInitialIntensity = specialLight.intensity;
-            specialLight.intensity = 0; // Asegurarse de que esté apagado al inicio
+            _specialLightInitialIntensity = specialLight.intensity;
+            specialLight.intensity = 0f; // La luz especial siempre inicia apagada.
         }
-
-        // Suscribirse al evento que se dispara cuando el video termina
-        video.loopPointReached += OnVideoEnd;
     }
 
-    // Se ejecuta cuando otro objeto con un Collider entra en el trigger
+    // Es una buena práctica suscribirse a eventos en OnEnable y desuscribirse en OnDisable.
+    // Esto evita errores si el objeto se activa y desactiva en tiempo de ejecución.
+    private void OnEnable()
+    {
+        videoPlayer.loopPointReached += OnVideoEnd;
+    }
+
+    private void OnDisable()
+    {
+        videoPlayer.loopPointReached -= OnVideoEnd;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Reproduce el video solo si no se ha reproducido antes
-        if (!hasPlayed && !video.isPlaying)
+        // Comprobamos que el video no se haya reproducido ya y que no esté en curso.
+        if (!_hasPlayed && !videoPlayer.isPlaying)
         {
-            hasPlayed = true;
-            StartCoroutine(FadeLights(0, true, () => video.Play())); // Apagar luces y luego reproducir el video
+            _hasPlayed = true;
+            // Inicia la secuencia: apagar luces, encender luz especial y reproducir video.
+            FadeLightsAndPlay();
         }
     }
 
-    // Se ejecuta cuando el video termina
     private void OnVideoEnd(VideoPlayer vp)
     {
-        StartCoroutine(FadeLightsBackToOriginal()); // Restaurar las luces gradualmente
+        // Al terminar el video, restauramos las luces a su estado original.
+        RestoreInitialLights();
     }
 
-    // Corrutina para cambiar la intensidad de las luces gradualmente
-    private IEnumerator FadeLights(float targetIntensity, bool activateSpecialLight, System.Action onComplete = null)
+    private void FadeLightsAndPlay()
     {
-        float startTime = Time.time;
-
-        while (Time.time - startTime < fadeDuration)
+        // Creamos un array con las intensidades objetivo para las luces de la escena (todas a 0).
+        float[] targetIntensities = new float[sceneLights.Count];
+        for (int i = 0; i < targetIntensities.Length; i++)
         {
-            float t = (Time.time - startTime) / fadeDuration;
-            for (int i = 0; i < lights.Count; i++)
-            {
-                lights[i].intensity = Mathf.Lerp(lights[i].intensity, targetIntensity, t);
-            }
-
-            if (specialLight != null)
-            {
-                float specialTargetIntensity = activateSpecialLight ? specialLightInitialIntensity : 0;
-                specialLight.intensity = Mathf.Lerp(specialLight.intensity, specialTargetIntensity, t);
-            }
-
-            yield return null;
+            targetIntensities[i] = 0f;
         }
 
-        // Asegurar valores finales
-        for (int i = 0; i < lights.Count; i++)
-        {
-            lights[i].intensity = targetIntensity;
-        }
-
-        if (specialLight != null)
-        {
-            specialLight.intensity = activateSpecialLight ? specialLightInitialIntensity : 0;
-        }
-
-        onComplete?.Invoke(); // Llamar al callback si se proporciona
+        // Llamamos a nuestra corrutina unificada.
+        // El video se reproducirá cuando la transición de luces termine (gracias al callback).
+        StartFade(targetIntensities, _specialLightInitialIntensity, () => videoPlayer.Play());
     }
 
-    // Corrutina para restaurar las luces a su intensidad inicial
-    private IEnumerator FadeLightsBackToOriginal()
+    private void RestoreInitialLights()
     {
-        float startTime = Time.time;
-
-        while (Time.time - startTime < fadeDuration)
+        // La intensidad objetivo de la luz especial es 0 para apagarla.
+        // Las luces de la escena vuelven a sus intensidades originales.
+        StartFade(_initialSceneIntensities, 0f, null);
+    }
+    
+    private void StartFade(float[] sceneTargetIntensities, float specialTargetIntensity, System.Action onComplete)
+    {
+        // Si ya hay una transición en curso, la detenemos para empezar la nueva.
+        // Esto evita comportamientos extraños si los eventos se disparan muy rápido.
+        if (_fadeCoroutine != null)
         {
-            float t = (Time.time - startTime) / fadeDuration;
-            for (int i = 0; i < lights.Count; i++)
-            {
-                lights[i].intensity = Mathf.Lerp(lights[i].intensity, initialIntensities[i], t);
-            }
+            StopCoroutine(_fadeCoroutine);
+        }
+        _fadeCoroutine = StartCoroutine(FadeLightsRoutine(sceneTargetIntensities, specialTargetIntensity, onComplete));
+    }
 
+    // Esta es la única corrutina, ahora es más genérica y reutilizable.
+    private IEnumerator FadeLightsRoutine(float[] sceneTargetIntensities, float specialTargetIntensity, System.Action onComplete)
+    {
+        float elapsedTime = 0f;
+
+        // Guardamos las intensidades ACTUALES al inicio de la transición.
+        // Esto es clave para un 'Lerp' correcto y lineal.
+        float[] startIntensities = new float[sceneLights.Count];
+        for (int i = 0; i < sceneLights.Count; i++)
+        {
+            startIntensities[i] = sceneLights[i] != null ? sceneLights[i].intensity : 0;
+        }
+        float specialStartIntensity = specialLight != null ? specialLight.intensity : 0;
+
+        while (elapsedTime < fadeDuration)
+        {
+            // Calculamos el progreso de 0 a 1 de forma lineal.
+            float t = elapsedTime / fadeDuration;
+
+            // Actualizamos la intensidad de cada luz de la escena.
+            for (int i = 0; i < sceneLights.Count; i++)
+            {
+                if (sceneLights[i] != null)
+                {
+                    sceneLights[i].intensity = Mathf.Lerp(startIntensities[i], sceneTargetIntensities[i], t);
+                }
+            }
+            
+            // Actualizamos la luz especial.
             if (specialLight != null)
             {
-                specialLight.intensity = Mathf.Lerp(specialLight.intensity, 0, t);
+                specialLight.intensity = Mathf.Lerp(specialStartIntensity, specialTargetIntensity, t);
             }
 
-            yield return null;
+            elapsedTime += Time.deltaTime;
+            yield return _waitForEndOfFrame; // Usamos nuestra variable cacheada para no generar basura.
         }
 
-        // Asegurar valores finales
-        for (int i = 0; i < lights.Count; i++)
+        // Al final del bucle, nos aseguramos de que todas las luces tengan exactamente su valor final.
+        for (int i = 0; i < sceneLights.Count; i++)
         {
-            lights[i].intensity = initialIntensities[i];
+            if (sceneLights[i] != null)
+            {
+                 sceneLights[i].intensity = sceneTargetIntensities[i];
+            }
         }
-
         if (specialLight != null)
         {
-            specialLight.intensity = 0;
+            specialLight.intensity = specialTargetIntensity;
         }
+
+        // Ejecutamos la acción final (como video.Play()) si existe.
+        onComplete?.Invoke();
+        _fadeCoroutine = null;
     }
 }
