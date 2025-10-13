@@ -11,6 +11,7 @@ public class Videos : MonoBehaviour
     private Dictionary<Light, float> initialIntensities = new Dictionary<Light, float>(); // Estado inicial de las luces
     public Light specialLight; // Foco que inicia apagado
     private float specialLightInitialIntensity; // Intensidad inicial del foco especial
+    private bool hasPlayed = false; // Bandera para evitar que el video se reproduzca más de una vez
 
     // Se ejecuta al iniciar el script
     void Start()
@@ -40,9 +41,10 @@ public class Videos : MonoBehaviour
     // Se ejecuta cuando otro objeto con un Collider entra en el trigger
     private void OnTriggerEnter(Collider other)
     {
-        // Reproduce el video solo si no se está reproduciendo
-        if (!video.isPlaying)
+        // Reproduce el video solo si no se ha reproducido antes
+        if (!hasPlayed && !video.isPlaying)
         {
+            hasPlayed = true; // Marcar el video como reproducido
             video.Play();
             StartCoroutine(FadeLights(0, true)); // Apagar las luces gradualmente y encender el foco especial
         }
