@@ -8,8 +8,8 @@ public class Videos : MonoBehaviour
     public VideoPlayer video;
     public List<Light> lights; // Lista de luces en la escena
     public float fadeDuration = 1.0f; // Duración del cambio gradual de intensidad
-    private Dictionary<Light, float> initialIntensities = new Dictionary<Light, float>(); // Estado inicial de las luces
     public Light specialLight; // Foco que inicia apagado
+    private float[] initialIntensities; // Intensidades iniciales de las luces
     private float specialLightInitialIntensity; // Intensidad inicial del foco especial
     private bool hasPlayed = false; // Bandera para evitar que el video se reproduzca más de una vez
 
@@ -21,10 +21,11 @@ public class Videos : MonoBehaviour
         // Detiene el video al iniciar
         video.Stop();
 
-        // Guardar la intensidad inicial de cada luz
-        foreach (Light light in lights)
+        // Guardar las intensidades iniciales de las luces
+        initialIntensities = new float[lights.Count];
+        for (int i = 0; i < lights.Count; i++)
         {
-            initialIntensities[light] = light.intensity;
+            initialIntensities[i] = lights[i].intensity;
         }
 
         // Guardar la intensidad inicial del foco especial
@@ -44,16 +45,9 @@ public class Videos : MonoBehaviour
         // Reproduce el video solo si no se ha reproducido antes
         if (!hasPlayed && !video.isPlaying)
         {
-            hasPlayed = true; // Marcar el video como reproducido
-            video.Play();
-            StartCoroutine(FadeLights(0, true)); // Apagar las luces gradualmente y encender el foco especial
+            hasPlayed = true;
+            StartCoroutine(FadeLights(0, true, () => video.Play())); // Apagar luces y luego reproducir el video
         }
-    }
-
-    // Se ejecuta cuando otro objeto con un Collider sale del trigger
-    private void OnTriggerExit(Collider other)
-    {
-        // No hacer nada al salir del trigger, esperar a que el video termine
     }
 
     // Se ejecuta cuando el video termina
@@ -62,83 +56,32 @@ public class Videos : MonoBehaviour
         StartCoroutine(FadeLightsBackToOriginal()); // Restaurar las luces gradualmente
     }
 
-    // Corrutina para restaurar las luces a su intensidad inicial
-    private IEnumerator FadeLightsBackToOriginal()
-    {
-        float startTime = Time.time;
-
-        // Intensidad actual de las luces
-        Dictionary<Light, float> currentIntensities = new Dictionary<Light, float>();
-        foreach (Light light in lights)
-        {
-            currentIntensities[light] = light.intensity;
-        }
-
-        float specialLightCurrentIntensity = specialLight != null ? specialLight.intensity : 0;
-
-        while (Time.time - startTime < fadeDuration)
-        {
-            float t = (Time.time - startTime) / fadeDuration;
-            foreach (Light light in lights)
-            {
-                light.intensity = Mathf.Lerp(currentIntensities[light], initialIntensities[light], t);
-            }
-
-            if (specialLight != null)
-            {
-                specialLight.intensity = Mathf.Lerp(specialLightCurrentIntensity, 0, t);
-            }
-
-            yield return null;
-        }
-
-        // Asegurarse de que la intensidad final sea la deseada
-        foreach (Light light in lights)
-        {
-            light.intensity = initialIntensities[light];
-        }
-
-        if (specialLight != null)
-        {
-            specialLight.intensity = 0; // Apagar el foco especial
-        }
-    }
-
     // Corrutina para cambiar la intensidad de las luces gradualmente
-    private IEnumerator FadeLights(float targetIntensity, bool activateSpecialLight)
+    private IEnumerator FadeLights(float targetIntensity, bool activateSpecialLight, System.Action onComplete = null)
     {
         float startTime = Time.time;
-
-        // Intensidad inicial de las luces
-        Dictionary<Light, float> currentIntensities = new Dictionary<Light, float>();
-        foreach (Light light in lights)
-        {
-            currentIntensities[light] = light.intensity;
-        }
-
-        float specialLightCurrentIntensity = specialLight != null ? specialLight.intensity : 0;
 
         while (Time.time - startTime < fadeDuration)
         {
             float t = (Time.time - startTime) / fadeDuration;
-            foreach (Light light in lights)
+            for (int i = 0; i < lights.Count; i++)
             {
-                light.intensity = Mathf.Lerp(currentIntensities[light], targetIntensity, t);
+                lights[i].intensity = Mathf.Lerp(lights[i].intensity, targetIntensity, t);
             }
 
             if (specialLight != null)
             {
                 float specialTargetIntensity = activateSpecialLight ? specialLightInitialIntensity : 0;
-                specialLight.intensity = Mathf.Lerp(specialLightCurrentIntensity, specialTargetIntensity, t);
+                specialLight.intensity = Mathf.Lerp(specialLight.intensity, specialTargetIntensity, t);
             }
 
             yield return null;
         }
 
-        // Asegurarse de que la intensidad final sea la deseada
-        foreach (Light light in lights)
+        // Asegurar valores finales
+        for (int i = 0; i < lights.Count; i++)
         {
-            light.intensity = targetIntensity;
+            lights[i].intensity = targetIntensity;
         }
 
         if (specialLight != null)
@@ -146,18 +89,39 @@ public class Videos : MonoBehaviour
             specialLight.intensity = activateSpecialLight ? specialLightInitialIntensity : 0;
         }
 
-        // Restaurar las luces al estado inicial si el video terminó
-        if (!video.isPlaying)
+        onComplete?.Invoke(); // Llamar al callback si se proporciona
+    }
+
+    // Corrutina para restaurar las luces a su intensidad inicial
+    private IEnumerator FadeLightsBackToOriginal()
+    {
+        float startTime = Time.time;
+
+        while (Time.time - startTime < fadeDuration)
         {
-            foreach (Light light in lights)
+            float t = (Time.time - startTime) / fadeDuration;
+            for (int i = 0; i < lights.Count; i++)
             {
-                light.intensity = initialIntensities[light];
+                lights[i].intensity = Mathf.Lerp(lights[i].intensity, initialIntensities[i], t);
             }
 
             if (specialLight != null)
             {
-                specialLight.intensity = 0; // Apagar el foco especial
+                specialLight.intensity = Mathf.Lerp(specialLight.intensity, 0, t);
             }
+
+            yield return null;
+        }
+
+        // Asegurar valores finales
+        for (int i = 0; i < lights.Count; i++)
+        {
+            lights[i].intensity = initialIntensities[i];
+        }
+
+        if (specialLight != null)
+        {
+            specialLight.intensity = 0;
         }
     }
 }

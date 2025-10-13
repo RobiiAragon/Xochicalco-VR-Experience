@@ -47,7 +47,7 @@ public class HandMenuController : MonoBehaviour
             // Hacer que el menú mire hacia la cabeza del jugador con un ajuste de 90 grados en el eje Y
             Vector3 directionToHead = PlayerHead.position - Menu.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(directionToHead, Vector3.up);
-            Menu.transform.rotation = lookRotation * Quaternion.Euler(0, -90, 0);
+            Menu.transform.rotation = lookRotation * Quaternion.Euler(0, -90, 30);
         }
     }
 

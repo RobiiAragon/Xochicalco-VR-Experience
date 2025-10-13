@@ -84,7 +84,6 @@ QualitySettings:
     customRenderPipeline: {fileID: 11400000, guid: 08e618817d17fea488bec7526ef894cf,
       type: 2}
     excludedTargetPlatforms:
-    - Android
     - Standalone
     - Server
   - serializedVersion: 2
@@ -126,8 +125,9 @@ QualitySettings:
       type: 2}
     excludedTargetPlatforms:
     - Server
+    - Android
   m_PerPlatformDefaultQuality:
-    Android: 2
+    Android: 1
     CloudRendering: 2
     GameCoreScarlett: 2
     GameCoreXboxOne: 2
