@@ -12,6 +12,8 @@ public class HandMenuController : MonoBehaviour
     private Quaternion _defaultRotation; // Rotación inicial del menú
     private bool _menuInHand; // Indica si el menú está en la mano del jugador
 
+    public Vector3 MenuOffset = new Vector3(0, 0, 0.2f); // Offset ajustado para acercar el menú en Z
+
     void Start()
     {
         // Guardar la posición y rotación inicial del menú
@@ -41,13 +43,13 @@ public class HandMenuController : MonoBehaviour
 
         if (_menuInHand && LeftControllerTransform != null && PlayerHead != null)
         {
-            // Actualizar la posición del menú para que siga la mano
-            Menu.transform.position = LeftControllerTransform.position;
+            // Actualizar la posición del menú para que siga la mano con el offset aplicado
+            Menu.transform.position = LeftControllerTransform.position + LeftControllerTransform.TransformDirection(MenuOffset);
 
-            // Hacer que el menú mire hacia la cabeza del jugador con un ajuste de 90 grados en el eje Y
+            // Hacer que el menú mire hacia la cabeza del jugador con un ajuste de 180 grados en el eje Y
             Vector3 directionToHead = PlayerHead.position - Menu.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(directionToHead, Vector3.up);
-            Menu.transform.rotation = lookRotation * Quaternion.Euler(0, -90, -30);
+            Menu.transform.rotation = lookRotation * Quaternion.Euler(0, -90, -20);
         }
     }
 
