@@ -48,7 +48,7 @@ public class Videos : MonoBehaviour
                 }
             }
         }
-        
+
         if (specialLight != null)
         {
             _specialLightInitialIntensity = specialLight.intensity;
@@ -105,7 +105,7 @@ public class Videos : MonoBehaviour
         // Las luces de la escena vuelven a sus intensidades originales.
         StartFade(_initialSceneIntensities, 0f, null);
     }
-    
+
     private void StartFade(float[] sceneTargetIntensities, float specialTargetIntensity, System.Action onComplete)
     {
         // Si ya hay una transición en curso, la detenemos para empezar la nueva.
@@ -144,7 +144,7 @@ public class Videos : MonoBehaviour
                     sceneLights[i].intensity = Mathf.Lerp(startIntensities[i], sceneTargetIntensities[i], t);
                 }
             }
-            
+
             // Actualizamos la luz especial.
             if (specialLight != null)
             {
@@ -160,7 +160,7 @@ public class Videos : MonoBehaviour
         {
             if (sceneLights[i] != null)
             {
-                 sceneLights[i].intensity = sceneTargetIntensities[i];
+                sceneLights[i].intensity = sceneTargetIntensities[i];
             }
         }
         if (specialLight != null)
