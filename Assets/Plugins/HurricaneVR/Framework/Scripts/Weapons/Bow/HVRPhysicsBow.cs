@@ -1,4 +1,5 @@
 ﻿using Assets.HurricaneVR.Framework.Shared.Utilities;
+using HurricaneVR.Framework;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Utils;
@@ -25,10 +26,18 @@ namespace HurricaneVR.Framework.Weapons.Bow
         private ConfigurableJoint _nockJoint;
         private ConfigurableJoint _restJoint;
         private Vector3 _nockPosition;
+        private HVRGrabbable _bowGrabbable;
 
         protected override void Start()
         {
             base.Start();
+
+            _bowGrabbable = GetComponent<HVRGrabbable>();
+            if (_bowGrabbable)
+            {
+                _bowGrabbable.HandGrabbed.AddListener(ShowVideoOnGrab);
+                _bowGrabbable.HandReleased.AddListener(HideVideoOnRelease);
+            }
 
             SetupStringJoint();
             _nockPosition = NockGrabbable.transform.localPosition;
@@ -66,6 +75,15 @@ namespace HurricaneVR.Framework.Weapons.Bow
             _stringJoint.SetXDrive(StringHeldSpring, 0, StringHeldSpring);
         }
 
+        private void ShowVideoOnGrab(HVRHandGrabber hand, HVRGrabbable bow)
+        {
+            VRVideoHUD.Instance?.Show();
+        }
+
+        private void HideVideoOnRelease(HVRHandGrabber hand, HVRGrabbable bow)
+        {
+            VRVideoHUD.Instance?.Hide();
+        }
 
 
         protected override void OnArrowNocked(HVRArrow arrow)

@@ -5,7 +5,6 @@ using UnityEngine.Video;
 
 // Asegura que los componentes necesarios existan en el GameObject para evitar errores.
 [RequireComponent(typeof(VideoPlayer))]
-[RequireComponent(typeof(Collider))]
 public class Videos : MonoBehaviour
 {
     // Usamos [SerializeField] en lugar de 'public' para exponer variables al Inspector.
@@ -68,21 +67,27 @@ public class Videos : MonoBehaviour
         videoPlayer.loopPointReached -= OnVideoEnd;
     }
 
-    private void OnTriggerEnter(Collider other)
+    // Método público para disparar la reproducción desde el botón físico.
+    // Asignar este método al evento del botón en el objeto físico del botón.
+    public void PlayVideo()
     {
-        // Comprobamos que el video no se haya reproducido ya y que no esté en curso.
-        if (!_hasPlayed && !videoPlayer.isPlaying)
-        {
-            _hasPlayed = true;
-            // Inicia la secuencia: apagar luces, encender luz especial y reproducir video.
-            FadeLightsAndPlay();
-        }
+        // Evitar reentradas si el video ya está reproduciéndose.
+        if (_hasPlayed || videoPlayer.isPlaying) return;
+
+        // Reiniciar la reproducción desde el inicio.
+        videoPlayer.time = 0;
+
+        _hasPlayed = true;
+        FadeLightsAndPlay();
     }
 
     private void OnVideoEnd(VideoPlayer vp)
     {
         // Al terminar el video, restauramos las luces a su estado original.
         RestoreInitialLights();
+
+        // Permitir que el botón vuelva a iniciar el video.
+        _hasPlayed = false;
     }
 
     private void FadeLightsAndPlay()
@@ -171,5 +176,19 @@ public class Videos : MonoBehaviour
         // Ejecutamos la acción final (como video.Play()) si existe.
         onComplete?.Invoke();
         _fadeCoroutine = null;
+    }
+
+    // Método público para reiniciar la reproducción (por si otro botón físico quiere permitir ver de nuevo).
+    // Este método permite que un botón externo ponga _hasPlayed = false y dispare PlayVideo().
+    public void RestartVideo()
+    {
+        _hasPlayed = false;
+
+        if (videoPlayer.isPlaying)
+        {
+            videoPlayer.Stop();
+        }
+
+        PlayVideo();
     }
 }
