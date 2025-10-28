@@ -119,7 +119,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlbedoAlpha: 0.89775264
+    - _AlbedoAlpha: 0.8993136
     - _Alpha: 1
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -169,7 +169,7 @@ Material:
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
-    - _refraction: 0.07009946
+    - _refraction: 0.0069322847
     - _useTransparency: 1
     m_Colors:
     - _AlbedoSpeed: {r: 0, g: 0, b: -0.5, a: 0}
