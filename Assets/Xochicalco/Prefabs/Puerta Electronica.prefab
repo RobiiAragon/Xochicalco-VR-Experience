@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 233613093801275624, guid: be14a6ae55b630848a6ea2cb8d2abf9d,
         type: 3}
       propertyPath: m_Name
-      value: sliding_door_setup
+      value: Puerta Electronica
       objectReference: {fileID: 0}
     - target: {fileID: 609715972795263570, guid: be14a6ae55b630848a6ea2cb8d2abf9d,
         type: 3}

@@ -22,8 +22,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: treeBrown
   m_Shader: {fileID: 4800000, guid: 8d2bb70cbf9db8d4da26e15b26e74248, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
   m_InvalidKeywords: []
@@ -34,7 +32,6 @@ Material:
   stringTagMap:
     RenderType: TransparentCutout
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -140,8 +137,8 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.4056604, g: 0.2211247, b: 0, a: 1}
-    - _Color: {r: 0.40566036, g: 0.22112465, b: 0, a: 1}
+    - _BaseColor: {r: 0.40392157, g: 0.06341252, b: 0, a: 1}
+    - _Color: {r: 0.40392154, g: 0.063412495, b: 0, a: 1}
     - _EmissionColor: {r: 2, g: 0.5176471, b: 0, a: 1}
     - _SectionNormal: {r: -1, g: 0, b: -0.0000009536743, a: 0}
     - _SectionPos: {r: 19, g: 1.1, b: 16.5, a: 0}

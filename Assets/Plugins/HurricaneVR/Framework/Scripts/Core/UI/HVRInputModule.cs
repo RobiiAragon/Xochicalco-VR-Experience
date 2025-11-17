@@ -8,7 +8,11 @@ namespace HurricaneVR.Framework.Core.UI
 {
     public class HVRInputModule : PointerInputModule
     {
+        // keep single Instance for backward compat, but allow multiple Instances via Instances list
         public static HVRInputModule Instance { get; private set; }
+
+        // New: allow multiple HVRInputModule instances
+        public static List<HVRInputModule> Instances { get; } = new List<HVRInputModule>();
 
         public float MaxDistance = 3f;
 
@@ -23,16 +27,23 @@ namespace HurricaneVR.Framework.Core.UI
         [Tooltip("Angle the pointer has to move before a drag starts, too low and click events on a scroll rect will not execute")]
         public float AngleDragThreshold = 1f;
 
-        protected override void Awake()
+        private void Awake()
         {
+            // Register this module in the Instances list and keep a primary Instance if not set.
+            if (!Instances.Contains(this))
+            {
+                Instances.Add(this);
+            }
+
             if (Instance == null)
             {
                 Instance = this;
             }
-            else
+
+            // Ensure Pointers list exists to avoid null refs during Process
+            if (Pointers == null)
             {
-                Debug.LogError("Multiple HVRInputModule components found. Deleting component from " + gameObject.name);
-                Destroy(this);
+                Pointers = new List<HVRUIPointer>();
             }
 
             Pointers = FindObjectsOfType<HVRUIPointer>().ToList();
@@ -73,6 +84,10 @@ namespace HurricaneVR.Framework.Core.UI
 
         public override void Process()
         {
+            // guard against null Pointers to avoid NREs
+            if (Pointers == null || Pointers.Count == 0)
+                return;
+
             for (var j = 0; j < Pointers.Count; j++)
             {
                 var pointer = Pointers[j];

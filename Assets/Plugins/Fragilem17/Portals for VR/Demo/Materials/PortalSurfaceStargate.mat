@@ -117,7 +117,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlbedoAlpha: 0.8972245
+    - _AlbedoAlpha: 0.930615
     - _Alpha: 1
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -134,7 +134,7 @@ Material:
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _Factor: 1
-    - _FadeColorBlend: 0
+    - _FadeColorBlend: 0.022712875
     - _ForceEye: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -164,7 +164,7 @@ Material:
     - _ZTest: 4
     - _ZWrite: 1
     - _ZWriteControl: 0
-    - _refraction: 0.043677427
+    - _refraction: 0.13538083
     - _useTransparency: 1
     m_Colors:
     - _AlbedoSpeed: {r: 0, g: 0, b: 0.05, a: 0}

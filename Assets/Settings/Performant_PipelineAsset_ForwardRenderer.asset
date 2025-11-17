@@ -31,7 +31,7 @@ MonoBehaviour:
     coreBlitColorAndDepthPS: {fileID: 0}
     cameraMotionVector: {fileID: 0}
     objectMotionVector: {fileID: 0}
-  m_AssetVersion: 1
+  m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -48,6 +48,7 @@ MonoBehaviour:
   m_ShadowTransparentReceive: 1
   m_RenderingMode: 0
   m_DepthPrimingMode: 0
+  m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
   m_ClusteredRendering: 0
   m_TileSize: 32

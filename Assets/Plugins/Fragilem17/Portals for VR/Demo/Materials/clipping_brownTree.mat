@@ -23,8 +23,6 @@ Material:
   m_Name: clipping_brownTree
   m_Shader: {fileID: -6465566751694194690, guid: 3dd9c7a19ab21c7408a51676b5d735e7,
     type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
   m_InvalidKeywords: []
@@ -35,7 +33,6 @@ Material:
   stringTagMap:
     RenderType: TransparentCutout
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -139,7 +136,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.4056604, g: 0.2211247, b: 0, a: 1}
+    - _BaseColor: {r: 0.40392157, g: 0.0693725, b: 0, a: 1}
     - _Color: {r: 0.40566036, g: 0.22112465, b: 0, a: 1}
     - _EmissionColor: {r: 2, g: 0.5176471, b: 0, a: 1}
     - _SectionNormal: {r: -1, g: 0, b: -0.0000009536743, a: 0}
