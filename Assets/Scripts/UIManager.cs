@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class UIManager : MonoBehaviour
 	// Conectar al botón "Reiniciar" desde el Inspector
 	public void RestartTour()
 	{
-		ShowWelcome();
+		// Recarga la escena actual para restablecer todo al estado inicial
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }
